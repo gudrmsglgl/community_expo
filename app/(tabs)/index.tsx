@@ -1,3 +1,4 @@
+import ButtonComponents from "@/app/pages/ButtonComponents";
 import TextButton from "@/components/TextButton";
 import { useState } from "react";
 import { StyleSheet, Text, TextInput } from "react-native";
@@ -11,6 +12,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView>
       <Text>Home Screen</Text>
+      <ButtonComponents />
       <TextButton title="Home Screen Button" onPress={handlePress} />
       <InputTextField />
     </SafeAreaView>
