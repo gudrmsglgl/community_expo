@@ -45,6 +45,8 @@ export default function CTAButton({
           disabled && variant === "Outlined" && styles.disabledText,
           size === "Large" ? styles.textLarge : styles.textSmall,
         ]}
+        numberOfLines={1}
+        ellipsizeMode={"tail"}
       >
         {title}
       </Text>
@@ -91,6 +93,9 @@ const styles = StyleSheet.create({
   },
   textSmall: {
     fontSize: 12,
+  },
+  textEllipsize: {
+    maxWidth: "100%",
   },
   textLarge: {
     paddingVertical: 11,

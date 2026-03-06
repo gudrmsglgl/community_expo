@@ -4,17 +4,30 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:storybook": "EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
+    "android:storybook": "EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start --android",
     "ios": "expo start --ios",
+    "ios:storybook": "EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "storybook-generate": "sb-rn-get-stories"
   },
   "dependencies": {
+    "@babel/core": "^7.29.0",
     "@expo/vector-icons": "^15.0.3",
+    "@gorhom/bottom-sheet": "^5.2.8",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-community/datetimepicker": "^8.6.0",
+    "@react-native-community/slider": "^5.1.2",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
+    "@storybook/addon-ondevice-actions": "^10.2.3",
+    "@storybook/addon-ondevice-controls": "^10.2.3",
+    "@storybook/react-native": "^10.2.3",
+    "babel-loader": "^8.4.1",
     "expo": "~54.0.33",
     "expo-constants": "~18.0.13",
     "expo-font": "~14.0.11",
@@ -31,11 +44,13 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-gesture-handler": "~2.28.0",
-    "react-native-worklets": "0.5.1",
     "react-native-reanimated": "~4.1.1",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
-    "react-native-web": "~0.21.0"
+    "react-native-svg": "^15.15.3",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.5.1",
+    "storybook": "^10.2.15"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",

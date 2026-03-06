@@ -1,8 +1,11 @@
 import ButtonComponents from "@/app/pages/ButtonComponents";
 import TextButton from "@/components/TextButton";
+import { Link } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+const isStorybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true";
 
 export default function HomeScreen() {
   const handlePress = () => {
@@ -12,6 +15,11 @@ export default function HomeScreen() {
   return (
     <SafeAreaView>
       <Text>Home Screen</Text>
+      {__DEV__ && isStorybookEnabled && (
+        <Link href="/storybook" style={{ marginBottom: 12 }}>
+          Storybook 열기
+        </Link>
+      )}
       <ButtonComponents />
       <TextButton title="Home Screen Button" onPress={handlePress} />
       <InputTextField />
