@@ -1,0 +1,33 @@
+import { colors } from "@/components";
+import Foundation from "@expo/vector-icons/Foundation";
+import { Link, Stack } from "expo-router";
+
+export default function AuthLayout() {
+  return (
+    <Stack
+      screenOptions={{
+        contentStyle: {
+          backgroundColor: colors.WHITE,
+        },
+        headerTintColor: colors.BLACK,
+      }}
+    >
+      <Stack.Screen
+        name="index"
+        options={{
+          headerShown: true,
+          title: "로그인",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+          headerTitleAlign: "center",
+          headerLeft: () => (
+            <Link href={"/"} dismissTo>
+              <Foundation name="home" size={24} color="black" />
+            </Link>
+          ),
+        }}
+      />
+    </Stack>
+  );
+}
