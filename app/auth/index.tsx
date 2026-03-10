@@ -1,6 +1,6 @@
 import Logo from "@/assets/images/logo.svg";
 import CTAButton from "@/components/CTAButton";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -9,7 +9,12 @@ export default function AuthScreen() {
     <SafeAreaView edges={["left", "right", "bottom"]} style={styles.container}>
       <LogoContainer />
       <View style={styles.buttons}>
-        <CTAButton title="로그인하기" variant="Filled" size="Large" />
+        <CTAButton
+          title="로그인하기"
+          variant="Filled"
+          size="Large"
+          onPress={() => router.push("/auth/login")}
+        />
         <Link href="/auth/signup">
           <Text style={styles.link}>이메일로 가입하기</Text>
         </Link>
