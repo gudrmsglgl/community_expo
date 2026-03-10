@@ -22,6 +22,7 @@ export const FilledWithLabel: Story = {
   args: {
     label: "소개",
     variant: "Filled",
+    placeholder: "소개를 입력해주세요.",
   },
 };
 
@@ -42,6 +43,7 @@ export const FilledError: Story = {
 export const Outlined: Story = {
   args: {
     variant: "Outlined",
+    placeholder: "입력해주세요.",
   },
 };
 

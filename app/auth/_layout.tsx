@@ -28,6 +28,18 @@ export default function AuthLayout() {
           ),
         }}
       />
+      <Stack.Screen
+        name="signup"
+        options={{
+          headerShown: true,
+          title: "회원가입",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+          headerTitleAlign: "center",
+          headerBackButtonDisplayMode: "minimal",
+        }}
+      />
     </Stack>
   );
 }

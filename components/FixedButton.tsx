@@ -13,7 +13,7 @@ export default function FixedButton({
   const insets = useSafeAreaInsets();
 
   const paddingBottom =
-    Platform.OS === "android" ? insets.bottom + 15 : insets.bottom;
+    Platform.OS === "android" ? insets.bottom + 5 : insets.bottom;
 
   return (
     <View style={[styles.container, { paddingBottom }]}>
