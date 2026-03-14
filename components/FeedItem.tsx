@@ -10,7 +10,7 @@ interface FeedItemProps {
 export default function FeedItem({ post }: FeedItemProps) {
   const isLiked = true;
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>{post.title}</Text>
         <Text style={styles.description} numberOfLines={3} ellipsizeMode="tail">
@@ -60,7 +60,9 @@ function IconItem({
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    backgroundColor: colors.WHITE,
+  },
   contentContainer: {
     paddingHorizontal: 16,
   },
