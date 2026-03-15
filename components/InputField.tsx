@@ -10,27 +10,29 @@ import { colors } from "./index";
 interface InputFieldProps extends TextInputProps {
   label?: string;
   variant?: "Filled" | "Outlined" | "Standard";
-  isError?: boolean;
+  //isError?: boolean;
   errorHint?: string;
 }
 
 export default function InputField({
   label,
   variant = "Filled",
-  isError = false,
-  errorHint,
+  //isError = false,
+  errorHint = "",
   ...props
 }: InputFieldProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
-        style={[styles.input, styles[variant], isError && styles.error]}
+        style={[
+          styles.input,
+          styles[variant],
+          Boolean(errorHint) && styles.error,
+        ]}
         {...props}
       />
-      {isError && errorHint && (
-        <Text style={styles.errorHint}>{errorHint}</Text>
-      )}
+      {Boolean(errorHint) && <Text style={styles.errorHint}>{errorHint}</Text>}
     </View>
   );
 }
