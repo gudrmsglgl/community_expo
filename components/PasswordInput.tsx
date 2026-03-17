@@ -7,12 +7,22 @@ export default function PasswordInput() {
     <Controller
       name="password"
       control={control}
-      render={({ field: { value, onChange } }) => (
+      rules={{
+        validate: (password: string) => {
+          if (password.length < 8) {
+            return "비밀번호는 8자 이상 입력해주세요.";
+          }
+          return true;
+        },
+      }}
+      render={({ field: { value, onChange }, fieldState: { error } }) => (
         <InputField
           label="비밀번호"
           placeholder="비밀번호를 입력해주세요."
           value={value}
+          secureTextEntry
           onChangeText={onChange}
+          errorHint={error?.message}
         />
       )}
     />
