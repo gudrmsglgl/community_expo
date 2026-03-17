@@ -23,6 +23,7 @@ export default function EmailInput() {
         <InputField
           label="이메일"
           placeholder="이메일을 입력해주세요."
+          inputMode="email"
           value={value}
           onChangeText={onChange}
           errorHint={error?.message}

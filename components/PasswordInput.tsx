@@ -22,6 +22,7 @@ export default function PasswordInput() {
           value={value}
           secureTextEntry
           onChangeText={onChange}
+          textContentType="oneTimeCode"
           errorHint={error?.message}
         />
       )}

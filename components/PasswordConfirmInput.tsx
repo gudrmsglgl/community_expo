@@ -22,6 +22,7 @@ export default function PasswordConfirmInput() {
           placeholder="비밀번호를 다시 입력해주세요."
           value={value}
           secureTextEntry
+          textContentType="oneTimeCode"
           errorHint={error?.message}
           onChangeText={onChange}
         />
