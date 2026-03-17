@@ -28,6 +28,7 @@ export default function SignupScreen() {
       password: "",
       passwordConfirm: "",
     },
+    mode: "onChange",
   });
 
   const [error, setError] = useState({
