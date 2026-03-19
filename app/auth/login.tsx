@@ -1,14 +1,13 @@
 import EmailInput from "@/components/EmailInput";
 import FixedButton from "@/components/FixedButton";
 import PasswordInput from "@/components/PasswordInput";
-import { useEffect, useRef } from "react";
+import useKeyboardFocusCleanup from "@/hooks/useKeyboardFocusCleanup";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -30,28 +29,7 @@ export default function LoginScreen() {
     console.log(data);
   };
 
-  const isKeyboardVisible = useRef(false);
-
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
-      isKeyboardVisible.current = true;
-    });
-
-    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
-      if (!isKeyboardVisible.current) {
-        return;
-      }
-
-      isKeyboardVisible.current = false;
-      const focusedInput = (TextInput as any).State?.currentlyFocusedInput?.();
-      focusedInput?.blur?.();
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
+  useKeyboardFocusCleanup();
 
   return (
     <KeyboardAvoidingView

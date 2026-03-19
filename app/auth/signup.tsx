@@ -1,16 +1,14 @@
-import FixedButton from "@/components/FixedButton";
-
 import EmailInput from "@/components/EmailInput";
+import FixedButton from "@/components/FixedButton";
 import PasswordConfirmInput from "@/components/PasswordConfirmInput";
 import PasswordInput from "@/components/PasswordInput";
-import { useEffect, useRef, useState } from "react";
+import useKeyboardFocusCleanup from "@/hooks/useKeyboardFocusCleanup";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -31,34 +29,7 @@ export default function SignupScreen() {
     mode: "onChange",
   });
 
-  const [error, setError] = useState({
-    email: "",
-    password: "",
-    passwordConfirm: "",
-  });
-
-  const isKeyboardVisible = useRef(false);
-
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
-      isKeyboardVisible.current = true;
-    });
-
-    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
-      if (!isKeyboardVisible.current) {
-        return;
-      }
-
-      isKeyboardVisible.current = false;
-      const focusedInput = (TextInput as any).State?.currentlyFocusedInput?.();
-      focusedInput?.blur?.();
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
+  useKeyboardFocusCleanup();
 
   const onSubmit = (data: FormValues) => {
     console.log(data);
