@@ -1,6 +1,8 @@
+import EmailInput from "@/components/EmailInput";
 import FixedButton from "@/components/FixedButton";
-import InputField from "@/components/InputField";
+import PasswordInput from "@/components/PasswordInput";
 import { useEffect, useRef } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -11,7 +13,23 @@ import {
   View,
 } from "react-native";
 
+type LoginFormValues = {
+  email: string;
+  password: string;
+};
+
 export default function LoginScreen() {
+  const loginForm = useForm<LoginFormValues>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = (data: LoginFormValues) => {
+    console.log(data);
+  };
+
   const isKeyboardVisible = useRef(false);
 
   useEffect(() => {
@@ -40,13 +58,18 @@ export default function LoginScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={styles.keyboardAvoidingView}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={styles.container}>
-          <InputField label="이메일" placeholder="이메일을 입력해주세요." />
-          <InputField label="비밀번호" placeholder="비밀번호를 입력해주세요." />
-        </View>
-      </TouchableWithoutFeedback>
-      <FixedButton label="로그인하기" onPress={() => {}} />
+      <FormProvider {...loginForm}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <View style={styles.container}>
+            <EmailInput />
+            <PasswordInput />
+          </View>
+        </TouchableWithoutFeedback>
+      </FormProvider>
+      <FixedButton
+        label="로그인하기"
+        onPress={loginForm.handleSubmit(onSubmit)}
+      />
     </KeyboardAvoidingView>
   );
 }
