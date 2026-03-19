@@ -16,8 +16,9 @@ export default function PasswordConfirmInput() {
           return true;
         },
       }}
-      render={({ field: { value, onChange }, fieldState: { error } }) => (
+      render={({ field: { ref, value, onChange }, fieldState: { error } }) => (
         <InputField
+          ref={ref}
           label="비밀번호 확인"
           placeholder="비밀번호를 다시 입력해주세요."
           value={value}

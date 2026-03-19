@@ -1,3 +1,4 @@
+import { ForwardedRef, forwardRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,16 +14,15 @@ interface InputFieldProps extends TextInputProps {
   errorHint?: string;
 }
 
-export default function InputField({
-  label,
-  variant = "Filled",
-  errorHint = "",
-  ...props
-}: InputFieldProps) {
+function InputField(
+  { label, variant = "Filled", errorHint = "", ...props }: InputFieldProps,
+  ref?: ForwardedRef<TextInput>,
+) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
+        ref={ref}
         style={[
           styles.input,
           styles[variant],
@@ -73,3 +73,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
+export default forwardRef(InputField);

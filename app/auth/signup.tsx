@@ -73,7 +73,7 @@ export default function SignupScreen() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <View style={styles.container}>
             <EmailInput />
-            <PasswordInput />
+            <PasswordInput submitBehavior="submit" returnKeyType="next" />
             <PasswordConfirmInput />
           </View>
         </TouchableWithoutFeedback>
