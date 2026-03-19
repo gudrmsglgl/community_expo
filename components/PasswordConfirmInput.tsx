@@ -8,14 +8,6 @@ export default function PasswordConfirmInput() {
     <Controller
       name="passwordConfirm"
       control={control}
-      rules={{
-        validate: (passwordConfirm: string) => {
-          if (passwordConfirm !== password) {
-            return "비밀번호가 일치하지 않습니다.";
-          }
-          return true;
-        },
-      }}
       render={({ field: { ref, value, onChange }, fieldState: { error } }) => (
         <InputField
           ref={ref}

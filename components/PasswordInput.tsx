@@ -16,14 +16,6 @@ export default function PasswordInput({
     <Controller
       name="password"
       control={control}
-      rules={{
-        validate: (password: string) => {
-          if (password.length < 8) {
-            return "비밀번호는 8자 이상 입력해주세요.";
-          }
-          return true;
-        },
-      }}
       render={({ field: { ref, value, onChange }, fieldState: { error } }) => (
         <InputField
           ref={ref}

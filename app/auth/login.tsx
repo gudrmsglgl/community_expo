@@ -2,6 +2,8 @@ import EmailInput from "@/components/EmailInput";
 import FixedButton from "@/components/FixedButton";
 import PasswordInput from "@/components/PasswordInput";
 import useKeyboardFocusCleanup from "@/hooks/useKeyboardFocusCleanup";
+import { loginSchema, LoginSchema } from "@/schemas/loginSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   Keyboard,
@@ -12,20 +14,16 @@ import {
   View,
 } from "react-native";
 
-type LoginFormValues = {
-  email: string;
-  password: string;
-};
-
 export default function LoginScreen() {
-  const loginForm = useForm<LoginFormValues>({
+  const loginForm = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = (data: LoginFormValues) => {
+  const onSubmit = (data: LoginSchema) => {
     console.log(data);
   };
 

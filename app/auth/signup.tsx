@@ -3,6 +3,8 @@ import FixedButton from "@/components/FixedButton";
 import PasswordConfirmInput from "@/components/PasswordConfirmInput";
 import PasswordInput from "@/components/PasswordInput";
 import useKeyboardFocusCleanup from "@/hooks/useKeyboardFocusCleanup";
+import { signupSchema, SignupSchema } from "@/schemas/signupSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   Keyboard,
@@ -13,14 +15,9 @@ import {
   View,
 } from "react-native";
 
-type FormValues = {
-  email: string;
-  password: string;
-  passwordConfirm: string;
-};
-
 export default function SignupScreen() {
-  const signupForm = useForm<FormValues>({
+  const signupForm = useForm<SignupSchema>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -31,7 +28,7 @@ export default function SignupScreen() {
 
   useKeyboardFocusCleanup();
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: SignupSchema) => {
     console.log(data);
   };
 
