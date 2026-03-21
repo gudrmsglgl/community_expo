@@ -1,3 +1,4 @@
+import { postSignup } from "@/api/auth";
 import EmailInput from "@/components/EmailInput";
 import FixedButton from "@/components/FixedButton";
 import PasswordConfirmInput from "@/components/PasswordConfirmInput";
@@ -28,8 +29,13 @@ export default function SignupScreen() {
 
   useKeyboardFocusCleanup();
 
-  const onSubmit = (data: SignupSchema) => {
-    console.log(data);
+  const onSubmit = async (data: SignupSchema) => {
+    console.log("submit > signup ");
+
+    await postSignup({
+      email: data.email,
+      password: data.password,
+    });
   };
 
   return (
