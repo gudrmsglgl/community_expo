@@ -1,8 +1,8 @@
-import { postSignup } from "@/api/auth";
 import EmailInput from "@/components/EmailInput";
 import FixedButton from "@/components/FixedButton";
 import PasswordConfirmInput from "@/components/PasswordConfirmInput";
 import PasswordInput from "@/components/PasswordInput";
+import useAuth from "@/hooks/queries/useAuth";
 import useKeyboardFocusCleanup from "@/hooks/useKeyboardFocusCleanup";
 import { signupSchema, SignupSchema } from "@/schemas/signupSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,7 @@ import {
 } from "react-native";
 
 export default function SignupScreen() {
+  const { signupMutation } = useAuth();
   const signupForm = useForm<SignupSchema>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -29,12 +30,11 @@ export default function SignupScreen() {
 
   useKeyboardFocusCleanup();
 
-  const onSubmit = async (data: SignupSchema) => {
-    console.log("submit > signup ");
-
-    await postSignup({
-      email: data.email,
-      password: data.password,
+  const onSubmit = (data: SignupSchema) => {
+    const { email, password } = data;
+    signupMutation.mutate({
+      email,
+      password,
     });
   };
 

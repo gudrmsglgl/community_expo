@@ -4,11 +4,11 @@ async function saveSecureStore(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
 }
 
-async function saveAccessToken(accessToken: string) {
+export async function saveAccessToken(accessToken: string) {
   await saveSecureStore("accessToken", accessToken);
 }
 
-export async function getSecureAccessToken() {
+export async function getAccessToken() {
   const accessToken = (await SecureStore.getItemAsync("accessToken")) ?? null;
   return accessToken;
 }

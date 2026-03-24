@@ -1,3 +1,6 @@
+import queryClient from "@/api/queryClient";
+import useAuth from "@/hooks/queries/useAuth";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import type { ComponentType } from "react";
 import "react-native-reanimated";
@@ -14,6 +17,17 @@ export default function RootLayout() {
     const StorybookUIRoot = require("../.rnstorybook").default as ComponentType;
     return <StorybookUIRoot />;
   }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RootNavigator />
+    </QueryClientProvider>
+  );
+}
+
+function RootNavigator() {
+  const { auth } = useAuth();
+  console.log("auth", auth);
 
   return (
     <Stack>

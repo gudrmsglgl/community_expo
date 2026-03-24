@@ -28,6 +28,7 @@
     "@storybook/addon-ondevice-actions": "^10.2.3",
     "@storybook/addon-ondevice-controls": "^10.2.3",
     "@storybook/react-native": "^10.2.3",
+    "@tanstack/react-query": "^5.91.3",
     "axios": "^1.13.6",
     "babel-loader": "^8.4.1",
     "expo": "~54.0.33",

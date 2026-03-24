@@ -1,4 +1,5 @@
-import { getSecureAccessToken } from "@/utils/secureStore";
+import type { Profile } from "@/types";
+import { getAccessToken } from "@/utils/secureStore";
 import { axiosInstance } from "./axios";
 
 type RequestBody = {
@@ -19,8 +20,8 @@ async function postLogin(body: RequestBody): Promise<{ accessToken: string }> {
   return data;
 }
 
-async function getMe() {
-  const accessToken = await getSecureAccessToken();
+async function getMe(): Promise<Profile> {
+  const accessToken = await getAccessToken();
   const { data } = await axiosInstance.get("/auth/me", {
     headers: {
       Authorization: `Bearer ${accessToken}`,
