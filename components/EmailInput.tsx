@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from "react-hook-form";
 import InputField from "./InputField";
 
-export default function EmailInput() {
+export default function EmailInput({ onFocus }: { onFocus: () => void }) {
   const { control, setFocus } = useFormContext();
   return (
     <Controller
@@ -18,6 +18,7 @@ export default function EmailInput() {
           submitBehavior="submit"
           onSubmitEditing={() => setFocus("password")}
           errorHint={error?.message}
+          onFocus={onFocus}
         />
       )}
     />

@@ -5,11 +5,13 @@ import InputField from "./InputField";
 interface Props {
   submitBehavior?: TextInputProps["submitBehavior"];
   returnKeyType?: TextInputProps["returnKeyType"];
+  onFocus?: TextInputProps["onFocus"];
 }
 
 export default function PasswordInput({
   submitBehavior = "blurAndSubmit",
   returnKeyType = "none",
+  onFocus = () => {},
 }: Props) {
   const { control, setFocus } = useFormContext();
   return (
@@ -29,6 +31,7 @@ export default function PasswordInput({
           submitBehavior={submitBehavior}
           onSubmitEditing={() => setFocus("passwordConfirm")}
           errorHint={error?.message}
+          onFocus={onFocus}
         />
       )}
     />

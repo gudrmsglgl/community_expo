@@ -1,16 +1,22 @@
+import { colors } from "@/components";
 import EmailInput from "@/components/EmailInput";
 import FixedButton from "@/components/FixedButton";
 import PasswordInput from "@/components/PasswordInput";
 import useAuth from "@/hooks/queries/useAuth";
 import useKeyboardFocusCleanup from "@/hooks/useKeyboardFocusCleanup";
 import { loginSchema, LoginSchema } from "@/schemas/loginSchemas";
+import { ApiErrorResponse } from "@/types/api";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isAxiosError } from "axios";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  Text,
+  TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -25,12 +31,27 @@ export default function LoginScreen() {
     },
   });
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   const onSubmit = (data: LoginSchema) => {
+    const focusedInput = TextInput.State?.currentlyFocusedInput?.();
+    focusedInput?.blur?.();
+
     const { email, password } = data;
-    loginMutation.mutate({
-      email,
-      password,
-    });
+    loginMutation.mutate(
+      {
+        email,
+        password,
+      },
+      {
+        onError: (error) => {
+          if (isAxiosError<ApiErrorResponse>(error)) {
+            const data = error.response?.data;
+            setErrorMessage(data?.message?.toString() ?? "");
+          }
+        },
+      },
+    );
   };
 
   useKeyboardFocusCleanup();
@@ -43,8 +64,11 @@ export default function LoginScreen() {
       <FormProvider {...loginForm}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <View style={styles.container}>
-            <EmailInput />
-            <PasswordInput />
+            <EmailInput onFocus={() => setErrorMessage("")} />
+            <PasswordInput onFocus={() => setErrorMessage("")} />
+            {errorMessage && (
+              <Text style={styles.errorMessage}>{errorMessage}</Text>
+            )}
           </View>
         </TouchableWithoutFeedback>
       </FormProvider>
@@ -66,5 +90,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 120,
+  },
+  errorMessage: {
+    color: colors.Red_500,
+    fontSize: 12,
   },
 });
