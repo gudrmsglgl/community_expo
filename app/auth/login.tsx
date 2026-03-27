@@ -1,7 +1,6 @@
 import { colors } from "@/components";
-import EmailInput from "@/components/EmailInput";
 import FixedButton from "@/components/FixedButton";
-import PasswordInput from "@/components/PasswordInput";
+import RHFInputField from "@/components/form/RHFInputField";
 import useAuth from "@/hooks/queries/useAuth";
 import useKeyboardFocusCleanup from "@/hooks/useKeyboardFocusCleanup";
 import { loginSchema, LoginSchema } from "@/schemas/loginSchemas";
@@ -64,8 +63,24 @@ export default function LoginScreen() {
       <FormProvider {...loginForm}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <View style={styles.container}>
-            <EmailInput onFocus={() => setErrorMessage("")} />
-            <PasswordInput onFocus={() => setErrorMessage("")} />
+            <RHFInputField<LoginSchema>
+              name="email"
+              label="이메일"
+              placeholder="이메일을 입력해주세요."
+              inputMode="email"
+              onFocus={() => setErrorMessage("")}
+              nextFieldName="password"
+            />
+
+            <RHFInputField<LoginSchema>
+              name="password"
+              label="비밀번호"
+              placeholder="비밀번호를 입력해주세요."
+              secureTextEntry
+              textContentType="oneTimeCode"
+              onFocus={() => setErrorMessage("")}
+            />
+
             {errorMessage && (
               <Text style={styles.errorMessage}>{errorMessage}</Text>
             )}

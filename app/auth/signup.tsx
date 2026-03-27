@@ -1,7 +1,5 @@
-import EmailInput from "@/components/EmailInput";
 import FixedButton from "@/components/FixedButton";
-import PasswordConfirmInput from "@/components/PasswordConfirmInput";
-import PasswordInput from "@/components/PasswordInput";
+import RHFInputField from "@/components/form/RHFInputField";
 import useAuth from "@/hooks/queries/useAuth";
 import useKeyboardFocusCleanup from "@/hooks/useKeyboardFocusCleanup";
 import { signupSchema, SignupSchema } from "@/schemas/signupSchemas";
@@ -46,9 +44,27 @@ export default function SignupScreen() {
       <FormProvider {...signupForm}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <View style={styles.container}>
-            <EmailInput />
-            <PasswordInput submitBehavior="submit" returnKeyType="next" />
-            <PasswordConfirmInput />
+            <RHFInputField<SignupSchema>
+              name="email"
+              label="이메일"
+              placeholder="이메일을 입력해주세요."
+              inputMode="email"
+              nextFieldName="password"
+            />
+            <RHFInputField<SignupSchema>
+              name="password"
+              label="비밀번호"
+              placeholder="비밀번호를 입력해주세요."
+              secureTextEntry
+              textContentType="oneTimeCode"
+            />
+            <RHFInputField<SignupSchema>
+              name="passwordConfirm"
+              label="비밀번호 확인"
+              placeholder="비밀번호를 다시 입력해주세요."
+              secureTextEntry
+              textContentType="oneTimeCode"
+            />
           </View>
         </TouchableWithoutFeedback>
       </FormProvider>
