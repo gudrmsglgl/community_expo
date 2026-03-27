@@ -27,6 +27,7 @@ function InputField(
           styles.input,
           styles[variant],
           Boolean(errorHint) && styles.error,
+          props.multiline && styles.multiline,
         ]}
         autoCorrect={false}
         autoCapitalize="none"
@@ -71,6 +72,10 @@ const styles = StyleSheet.create({
     color: colors.ORANGE_600,
     fontWeight: "bold",
     fontSize: 14,
+  },
+  multiline: {
+    height: 188,
+    padding: 10,
   },
 });
 

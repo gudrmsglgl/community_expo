@@ -1,9 +1,14 @@
+import { colors } from "@/components";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, Stack } from "expo-router";
 
 export default function PostLayout() {
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        contentStyle: { backgroundColor: colors.WHITE },
+      }}
+    >
       <Stack.Screen
         name="write"
         options={{
