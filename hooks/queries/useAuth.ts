@@ -4,7 +4,11 @@ import {
   clearAuthorizationHeader,
   setAuthorizationHeader,
 } from "@/utils/header";
-import { deleteAccessToken, saveAccessToken } from "@/utils/secureStore";
+import {
+  deleteAccessToken,
+  getAccessToken,
+  saveAccessToken,
+} from "@/utils/secureStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useEffect } from "react";
@@ -33,10 +37,19 @@ function useLogin() {
 }
 
 function useGetMe() {
-  const { data, isError } = useQuery({
+  const { data, isSuccess, isError } = useQuery({
     queryFn: getMe,
     queryKey: ["auth", "getMe"],
   });
+
+  useEffect(() => {
+    (async () => {
+      if (isSuccess) {
+        const accessToken = await getAccessToken();
+        setAuthorizationHeader(accessToken);
+      }
+    })();
+  }, [isSuccess]);
 
   useEffect(() => {
     if (isError) {

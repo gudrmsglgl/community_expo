@@ -1,7 +1,10 @@
+import CTAButton from "@/components/CTAButton";
 import RHFInputField from "@/components/form/RHFInputField";
 import useCreatePost from "@/hooks/useCreatePost";
 import { writePostSchema, WritePostSchema } from "@/schemas/writePostSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigation } from "expo-router";
+import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   Keyboard,
@@ -22,6 +25,21 @@ export default function WriteScreen() {
       imageUris: [],
     },
   });
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <CTAButton
+          title="저장"
+          onPress={writePostForm.handleSubmit(onSubmit)}
+          variant="Standard"
+          size="Small"
+        />
+      ),
+    });
+  }, []);
 
   const onSubmit = (data: WritePostSchema) => {
     useCreatePostMutation.mutate(data);
