@@ -1,4 +1,5 @@
 import RHFInputField from "@/components/form/RHFInputField";
+import useCreatePost from "@/hooks/useCreatePost";
 import { writePostSchema, WritePostSchema } from "@/schemas/writePostSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
@@ -11,13 +12,20 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 export default function WriteScreen() {
+  const useCreatePostMutation = useCreatePost();
+
   const writePostForm = useForm<WritePostSchema>({
     resolver: zodResolver(writePostSchema),
     defaultValues: {
       title: "",
       description: "",
+      imageUris: [],
     },
   });
+
+  const onSubmit = (data: WritePostSchema) => {
+    useCreatePostMutation.mutate(data);
+  };
 
   return (
     <FormProvider {...writePostForm}>
@@ -33,24 +41,6 @@ export default function WriteScreen() {
               label="제목"
               nextFieldName="description"
               placeholder="제목을 입력해주세요."
-            />
-            <RHFInputField<WritePostSchema>
-              name="description"
-              label="내용"
-              placeholder="내용을 입력해주세요."
-              multiline
-            />
-            <RHFInputField<WritePostSchema>
-              name="description"
-              label="내용"
-              placeholder="내용을 입력해주세요."
-              multiline
-            />
-            <RHFInputField<WritePostSchema>
-              name="description"
-              label="내용"
-              placeholder="내용을 입력해주세요."
-              multiline
             />
             <RHFInputField<WritePostSchema>
               name="description"
