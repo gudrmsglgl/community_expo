@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   multiline: {
+    textAlignVertical: "top",
     height: 188,
     padding: 10,
   },
