@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { colors } from "./index";
 
-type ButtonVariant = "Filled" | "Outlined";
+type ButtonVariant = "Filled" | "Outlined" | "Standard";
 type ButtonSize = "Large" | "Medium" | "Small";
 
 interface CTAButtonProps extends PressableProps {
@@ -73,6 +73,9 @@ const styles = StyleSheet.create({
   disabledOutlined: {
     borderColor: colors.Grey_300,
     borderWidth: 2,
+  },
+  Standard: {
+    backgroundColor: "transparent",
   },
   Large: {
     width: "100%",
