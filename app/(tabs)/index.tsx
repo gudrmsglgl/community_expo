@@ -1,16 +1,16 @@
 import { colors } from "@/components";
-import CTAButton from "@/components/CTAButton";
+import FeedList from "@/components/FeedList";
 import useAuth from "@/hooks/queries/useAuth";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const { auth } = useAuth();
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>Home Screen</Text>
+    <SafeAreaView style={styles.container} edges={["left", "right", "top"]}>
+      <FeedList />
 
       {auth.id && (
         <Pressable
@@ -22,7 +22,6 @@ export default function HomeScreen() {
           <Ionicons name="pencil" size={32} color={colors.WHITE} />
         </Pressable>
       )}
-      <CTAButton title="go login" onPress={() => router.push("/auth")} />
     </SafeAreaView>
   );
 }
@@ -30,6 +29,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.WHITE,
   },
   pencilButton: {
     width: 64,
