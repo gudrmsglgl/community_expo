@@ -1,10 +1,15 @@
 import useAuth from "@/hooks/queries/useAuth";
 import { Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
+import dayjs from "dayjs";
+import ko from "dayjs/locale/ko";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from ".";
 import { Post } from "../types";
 import Profile from "./Profile";
+dayjs.extend(relativeTime);
 
+dayjs.locale(ko);
 interface FeedItemProps {
   post: Post;
 }
@@ -22,7 +27,7 @@ export default function FeedItem({ post }: FeedItemProps) {
           onPress={() => {}}
           imageUri={post.author.imageUri}
           nickname={post.author.nickname}
-          createdAt={post.createdAt}
+          createdAt={dayjs(post.createdAt).fromNow()}
         />
       </View>
       <View style={styles.contentContainer}>
