@@ -1,5 +1,6 @@
 import { getMe, postLogin, postSignup } from "@/api/auth";
 import queryClient from "@/api/queryClient";
+import { queryKey } from "@/constants/queryKey";
 import {
   clearAuthorizationHeader,
   setAuthorizationHeader,
@@ -29,7 +30,7 @@ function useLogin() {
       setAuthorizationHeader(accessToken);
       await saveAccessToken(accessToken);
       queryClient.fetchQuery({
-        queryKey: ["auth", "getMe"],
+        queryKey: [queryKey.AUTH, queryKey.GET_ME],
       });
       router.replace("/");
     },
@@ -39,7 +40,7 @@ function useLogin() {
 function useGetMe() {
   const { data, isSuccess, isError } = useQuery({
     queryFn: getMe,
-    queryKey: ["auth", "getMe"],
+    queryKey: [queryKey.AUTH, queryKey.GET_ME],
   });
 
   useEffect(() => {
@@ -69,7 +70,7 @@ export default function useAuth() {
   const logout = () => {
     clearAuthorizationHeader();
     deleteAccessToken();
-    queryClient.resetQueries({ queryKey: ["auth"] });
+    queryClient.resetQueries({ queryKey: [queryKey.AUTH] });
   };
 
   return {
