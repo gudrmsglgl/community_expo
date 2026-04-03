@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import ko from "dayjs/locale/ko";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from ".";
 import { Post } from "../types";
 import Profile from "./Profile";
@@ -26,6 +27,7 @@ export default function FeedItem({ post }: FeedItemProps) {
     (like) => Number(like.userId) === Number(auth.id),
   );
 
+  const insets = useSafeAreaInsets();
   const { showActionSheetWithOptions } = useActionSheet();
 
   return (
@@ -45,6 +47,16 @@ export default function FeedItem({ post }: FeedItemProps) {
                       options: ["삭제", "수정", "취소"],
                       cancelButtonIndex: 2,
                       destructiveButtonIndex: 0,
+                      textStyle: {
+                        flex: 1,
+                        textAlign: "center",
+                        fontSize: 16,
+                        fontWeight: "bold",
+                      },
+                      showSeparators: true,
+                      containerStyle: {
+                        paddingBottom: insets.bottom,
+                      },
                     },
                     (index) => {
                       switch (index) {
