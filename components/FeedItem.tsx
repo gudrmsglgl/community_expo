@@ -1,4 +1,6 @@
 import useAuth from "@/hooks/queries/useAuth";
+import useAppToast from "@/hooks/useAppToast";
+import useDeletePost from "@/hooks/useDeletePost";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import {
   AntDesign,
@@ -23,6 +25,8 @@ interface FeedItemProps {
 
 export default function FeedItem({ post }: FeedItemProps) {
   const { auth } = useAuth();
+  const deletePostMutation = useDeletePost();
+  const showToast = useAppToast();
   const isLiked = post.likes.some(
     (like) => Number(like.userId) === Number(auth.id),
   );
@@ -62,6 +66,11 @@ export default function FeedItem({ post }: FeedItemProps) {
                       switch (index) {
                         case 0:
                           console.log("삭제");
+                          deletePostMutation.mutate(post.id.toString(), {
+                            onSuccess: () => {
+                              showToast("게시글이 삭제되었습니다.");
+                            },
+                          });
                           break;
                         case 1:
                           console.log("수정");
