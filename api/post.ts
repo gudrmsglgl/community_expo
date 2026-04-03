@@ -10,3 +10,8 @@ export async function getPosts(page = 1): Promise<Post[]> {
   const { data } = await axiosInstance.get(`/posts?page=${page}`);
   return data;
 }
+
+export async function deletePost(id: string) {
+  const { data } = await axiosInstance.delete(`/posts/${id}`);
+  return data;
+}
