@@ -1,5 +1,4 @@
 import DefaultAvatar from "@/assets/images/default-avatar.svg";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "./index";
 interface ProfileProps {
@@ -30,7 +29,7 @@ export default function Profile({
           <Text style={styles.time}>{createdAt}</Text>
         </View>
       </Pressable>
-      {option ? option : <AntDesign name="more" size={24} color="black" />}
+      {option}
     </View>
   );
 }

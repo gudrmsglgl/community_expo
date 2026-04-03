@@ -1,10 +1,11 @@
 import queryClient from "@/api/queryClient";
 import useAuth from "@/hooks/queries/useAuth";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import type { ComponentType } from "react";
-import "react-native-reanimated";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import "react-native-reanimated";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -20,11 +21,13 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <KeyboardProvider>
-        <RootNavigator />
-      </KeyboardProvider>
-    </QueryClientProvider>
+    <ActionSheetProvider>
+      <QueryClientProvider client={queryClient}>
+        <KeyboardProvider>
+          <RootNavigator />
+        </KeyboardProvider>
+      </QueryClientProvider>
+    </ActionSheetProvider>
   );
 }
 

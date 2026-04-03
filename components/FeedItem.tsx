@@ -1,5 +1,11 @@
 import useAuth from "@/hooks/queries/useAuth";
-import { Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import {
+  AntDesign,
+  Ionicons,
+  MaterialCommunityIcons,
+  Octicons,
+} from "@expo/vector-icons";
 import dayjs from "dayjs";
 import ko from "dayjs/locale/ko";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -20,6 +26,8 @@ export default function FeedItem({ post }: FeedItemProps) {
     (like) => Number(like.userId) === Number(auth.id),
   );
 
+  const { showActionSheetWithOptions } = useActionSheet();
+
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
@@ -28,6 +36,38 @@ export default function FeedItem({ post }: FeedItemProps) {
           imageUri={post.author.imageUri}
           nickname={post.author.nickname}
           createdAt={dayjs(post.createdAt).fromNow()}
+          option={
+            auth.id === post.userId && (
+              <Pressable
+                onPress={() => {
+                  showActionSheetWithOptions(
+                    {
+                      options: ["삭제", "수정", "취소"],
+                      cancelButtonIndex: 2,
+                      destructiveButtonIndex: 0,
+                    },
+                    (index) => {
+                      switch (index) {
+                        case 0:
+                          console.log("삭제");
+                          break;
+                        case 1:
+                          console.log("수정");
+                          break;
+                        case 2:
+                          console.log("취소");
+                          break;
+                        default:
+                          break;
+                      }
+                    },
+                  );
+                }}
+              >
+                <AntDesign name="more" size={24} color="black" />
+              </Pressable>
+            )
+          }
         />
       </View>
       <View style={styles.contentContainer}>
