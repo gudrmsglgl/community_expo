@@ -11,6 +11,7 @@ import {
 import dayjs from "dayjs";
 import ko from "dayjs/locale/ko";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from ".";
@@ -74,6 +75,7 @@ export default function FeedItem({ post }: FeedItemProps) {
                           break;
                         case 1:
                           console.log("수정");
+                          router.push(`/post/edit/${post.id}`);
                           break;
                         case 2:
                           console.log("취소");
