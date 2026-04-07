@@ -43,6 +43,7 @@ export default function CTAButton({
         style={[
           variant === "Filled" ? styles.text : styles.textFiiled,
           disabled && variant === "Outlined" && styles.disabledText,
+          disabled && variant === "Standard" && styles.disabledText,
           size === "Large" ? styles.textLarge : styles.textSmall,
         ]}
         numberOfLines={1}

@@ -23,6 +23,20 @@ export default function PostLayout() {
           ),
         }}
       />
+      <Stack.Screen
+        name="edit/[id]"
+        options={{
+          headerShown: true,
+          title: "수정",
+          headerTitleStyle: { fontWeight: "bold" },
+          headerTitleAlign: "center",
+          headerLeft: () => (
+            <Link href={"/"} dismissTo>
+              <Ionicons name="chevron-back" size={24} color="black" />
+            </Link>
+          ),
+        }}
+      />
     </Stack>
   );
 }
