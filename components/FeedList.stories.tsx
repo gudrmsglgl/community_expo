@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
-import FeedList from "./FeedList";
+import { FeedItemView } from "./FeedItem";
+import { FeedListView } from "./FeedList";
 
-const meta: Meta<typeof FeedList> = {
-  title: "DesignSystem/FeedList",
-  component: FeedList,
+const meta: Meta<typeof FeedListView> = {
+  title: "DesignSystem/FeedListView",
+  component: FeedListView,
   decorators: [
     (Story) => (
       <View style={{ backgroundColor: "white" }}>
@@ -16,7 +17,7 @@ const meta: Meta<typeof FeedList> = {
 
 export default meta;
 
-export const Default: StoryObj<typeof FeedList> = {
+export const Default: StoryObj<typeof FeedListView> = {
   args: {
     posts: [
       {
@@ -60,5 +61,6 @@ export const Default: StoryObj<typeof FeedList> = {
         comments: undefined,
       },
     ],
+    renderFeedItem: (post) => <FeedItemView post={post} />,
   },
 };

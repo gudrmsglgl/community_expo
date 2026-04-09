@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
-import FeedItem from "./FeedItem";
+import { FeedItemView } from "./FeedItem";
 
-const meta: Meta<typeof FeedItem> = {
-  title: "DesignSystem/FeedItem",
-  component: FeedItem,
+const meta: Meta<typeof FeedItemView> = {
+  title: "DesignSystem/FeedItemView",
+  component: FeedItemView,
   decorators: [
     (Story) => (
       <View style={{ padding: 16, backgroundColor: "white" }}>
@@ -16,7 +16,7 @@ const meta: Meta<typeof FeedItem> = {
 
 export default meta;
 
-export const Default: StoryObj<typeof FeedItem> = {
+export const Default: StoryObj<typeof FeedItemView> = {
   args: {
     post: {
       id: 1,
@@ -38,5 +38,7 @@ export const Default: StoryObj<typeof FeedItem> = {
       votes: undefined,
       comments: undefined,
     },
+    currentUserId: 1,
+    onPressMore: () => {},
   },
 };

@@ -36,6 +36,62 @@ export default function FeedItem({ post }: FeedItemProps) {
   const { showActionSheetWithOptions } = useActionSheet();
 
   return (
+    <FeedItemView
+      post={post}
+      currentUserId={Number(auth.id)}
+      onPressMore={() => {
+        showActionSheetWithOptions(
+          {
+            options: ["삭제", "수정", "취소"],
+            cancelButtonIndex: 2,
+            destructiveButtonIndex: 0,
+            textStyle: {
+              flex: 1,
+              textAlign: "center",
+              fontSize: 16,
+              fontWeight: "bold",
+            },
+            showSeparators: true,
+            containerStyle: {
+              paddingBottom: insets.bottom,
+            },
+          },
+          (index) => {
+            switch (index) {
+              case 0:
+                console.log("삭제");
+                deletePostMutation.mutate(post.id.toString(), {
+                  onSuccess: () => {
+                    showToast("게시글이 삭제되었습니다.");
+                  },
+                });
+                break;
+              case 1:
+                console.log("수정");
+                router.push(`/post/edit/${post.id}`);
+                break;
+              case 2:
+                console.log("취소");
+                break;
+              default:
+                break;
+            }
+          },
+        );
+      }}
+    />
+  );
+}
+
+export function FeedItemView({
+  post,
+  currentUserId,
+  onPressMore,
+}: FeedItemProps & { currentUserId?: number; onPressMore?: () => void }) {
+  const isLiked = post.likes.some(
+    (like) => Number(like.userId) === Number(currentUserId),
+  );
+  return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <Profile
@@ -44,49 +100,8 @@ export default function FeedItem({ post }: FeedItemProps) {
           nickname={post.author.nickname}
           createdAt={dayjs(post.createdAt).fromNow()}
           option={
-            auth.id === post.userId && (
-              <Pressable
-                onPress={() => {
-                  showActionSheetWithOptions(
-                    {
-                      options: ["삭제", "수정", "취소"],
-                      cancelButtonIndex: 2,
-                      destructiveButtonIndex: 0,
-                      textStyle: {
-                        flex: 1,
-                        textAlign: "center",
-                        fontSize: 16,
-                        fontWeight: "bold",
-                      },
-                      showSeparators: true,
-                      containerStyle: {
-                        paddingBottom: insets.bottom,
-                      },
-                    },
-                    (index) => {
-                      switch (index) {
-                        case 0:
-                          console.log("삭제");
-                          deletePostMutation.mutate(post.id.toString(), {
-                            onSuccess: () => {
-                              showToast("게시글이 삭제되었습니다.");
-                            },
-                          });
-                          break;
-                        case 1:
-                          console.log("수정");
-                          router.push(`/post/edit/${post.id}`);
-                          break;
-                        case 2:
-                          console.log("취소");
-                          break;
-                        default:
-                          break;
-                      }
-                    },
-                  );
-                }}
-              >
+            currentUserId === post.userId && (
+              <Pressable onPress={onPressMore}>
                 <AntDesign name="more" size={24} color="black" />
               </Pressable>
             )

@@ -35,7 +35,6 @@ export const Filled: Story = {
 export const FilledError: Story = {
   args: {
     variant: "Filled",
-    isError: true,
     errorHint: "내용을 입력해주세요.",
   },
 };
