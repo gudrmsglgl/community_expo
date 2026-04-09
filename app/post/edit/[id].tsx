@@ -1,5 +1,6 @@
 import CTAButton from "@/components/CTAButton";
 import RHFInputField from "@/components/form/RHFInputField";
+import useAppToast from "@/hooks/useAppToast";
 import useGetPost from "@/hooks/useGetPost";
 import useUpdatePost from "@/hooks/useUpdatePost";
 import { writePostSchema, WritePostSchema } from "@/schemas/writePostSchemas";
@@ -16,6 +17,7 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 export default function EditPostScreen() {
+  const showToast = useAppToast();
   const navigation = useNavigation();
   const { id } = useLocalSearchParams();
   const { data: post } = useGetPost(Number(id));
@@ -50,6 +52,7 @@ export default function EditPostScreen() {
       {
         onSuccess: () => {
           navigation.goBack();
+          showToast("게시글이 수정되었습니다.");
         },
       },
     );
