@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
+import CTAButton from "./CTAButton";
 import InputField from "./InputField";
 
 const meta: Meta<typeof InputField> = {
@@ -49,5 +50,20 @@ export const Outlined: Story = {
 export const Standard: Story = {
   args: {
     variant: "Standard",
+  },
+};
+
+export const FilledMultiline: Story = {
+  args: {
+    variant: "Filled",
+    multiline: true,
+    placeholder: "내용을 입력해주세요.",
+  },
+};
+
+export const FilledTailsOptions: Story = {
+  args: {
+    variant: "Filled",
+    tailOptions: <CTAButton variant="Filled" title="전송" size="Small" />,
   },
 };

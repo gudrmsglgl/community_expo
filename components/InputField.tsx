@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef } from "react";
+import { ForwardedRef, forwardRef, ReactElement } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,28 +12,40 @@ interface InputFieldProps extends TextInputProps {
   label?: string;
   variant?: "Filled" | "Outlined" | "Standard";
   errorHint?: string;
+  tailOptions?: ReactElement;
 }
 
 function InputField(
-  { label, variant = "Filled", errorHint = "", ...props }: InputFieldProps,
+  {
+    label,
+    variant = "Filled",
+    errorHint = "",
+    tailOptions = undefined,
+    ...props
+  }: InputFieldProps,
   ref?: ForwardedRef<TextInput>,
 ) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput
-        ref={ref}
+      <View
         style={[
-          styles.input,
+          styles.inputContainer,
           styles[variant],
-          Boolean(errorHint) && styles.error,
           props.multiline && styles.multiline,
+          Boolean(errorHint) && styles.error,
         ]}
-        autoCorrect={false}
-        autoCapitalize="none"
-        spellCheck={false}
-        {...props}
-      />
+      >
+        <TextInput
+          ref={ref}
+          style={[styles.input]}
+          autoCorrect={false}
+          autoCapitalize="none"
+          spellCheck={false}
+          {...props}
+        />
+        <View style={styles.tailOptionsContainer}>{tailOptions}</View>
+      </View>
       {Boolean(errorHint) && <Text style={styles.errorHint}>{errorHint}</Text>}
     </View>
   );
@@ -43,14 +55,18 @@ const styles = StyleSheet.create({
   container: {
     gap: 8,
   },
+  inputContainer: {
+    flexDirection: "row",
+    height: 44,
+  },
   label: {
     fontSize: 12,
   },
   input: {
     borderRadius: 8,
-    height: 44,
-    paddingHorizontal: 10,
+    padding: 10,
     fontSize: 14,
+    flex: 1,
   },
   Filled: {
     backgroundColor: colors.Grey_100,
@@ -77,6 +93,11 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     height: 188,
     padding: 10,
+  },
+  tailOptionsContainer: {
+    paddingHorizontal: 10,
+    height: "100%",
+    justifyContent: "center",
   },
 });
 
