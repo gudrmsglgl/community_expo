@@ -70,26 +70,6 @@ export default function FeedList() {
         });
       }}
     />
-    // <FlatList
-    //   ref={ref}
-    //   data={posts?.pages.flat() || []}
-    //   contentContainerStyle={styles.contentContainer}
-    //   keyExtractor={(item) => item.id.toString()}
-    //   renderItem={({ item }) => <FeedItem post={item} />}
-    //   onEndReached={() => {
-    //     if (hasNextPage && !isFetchingNextPage) {
-    //       fetchNextPage();
-    //     }
-    //   }}
-    //   onEndReachedThreshold={0.5}
-    //   refreshing={isRefreshing}
-    //   onRefresh={async () => {
-    //     setIsRefreshing(true);
-    //     await refetch().finally(() => {
-    //       setIsRefreshing(false);
-    //     });
-    //   }}
-    // />
   );
 }
 
