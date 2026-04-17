@@ -8,14 +8,17 @@ import {
   MaterialCommunityIcons,
   Octicons,
 } from "@expo/vector-icons";
+import { NiceAvatarProps } from "@zamplyy/react-native-nice-avatar";
 import dayjs from "dayjs";
 import ko from "dayjs/locale/ko";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SvgProps } from "react-native-svg";
 import { colors } from ".";
 import { Post } from "../types";
+import { DefaultRandomAvatar } from "./Avatar";
 import Profile from "./Profile";
 dayjs.extend(relativeTime);
 
@@ -28,9 +31,6 @@ export default function FeedItem({ post }: FeedItemProps) {
   const { auth } = useAuth();
   const deletePostMutation = useDeletePost();
   const showToast = useAppToast();
-  const isLiked = post.likes.some(
-    (like) => Number(like.userId) === Number(auth.id),
-  );
 
   const insets = useSafeAreaInsets();
   const { showActionSheetWithOptions } = useActionSheet();
@@ -39,6 +39,7 @@ export default function FeedItem({ post }: FeedItemProps) {
     <FeedItemView
       post={post}
       currentUserId={Number(auth.id)}
+      onPress={() => {}}
       onPressMore={() => {
         showActionSheetWithOptions(
           {
@@ -86,26 +87,36 @@ export default function FeedItem({ post }: FeedItemProps) {
 export function FeedItemView({
   post,
   currentUserId,
+  onPress,
   onPressMore,
-}: FeedItemProps & { currentUserId?: number; onPressMore?: () => void }) {
+  defaultUserAvatar = currentUserId == post.author.id && DefaultRandomAvatar,
+}: FeedItemProps & {
+  currentUserId: number;
+  onPress?: () => void;
+  onPressMore?: () => void;
+  defaultUserAvatar?: React.ComponentType<NiceAvatarProps | SvgProps>;
+}) {
   const isLiked = post.likes.some(
     (like) => Number(like.userId) === Number(currentUserId),
   );
+
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={onPress}>
       <View style={styles.profileContainer}>
         <Profile
-          onPress={() => {}}
+          onPress={onPress}
           imageUri={post.author.imageUri}
           nickname={post.author.nickname}
           createdAt={dayjs(post.createdAt).fromNow()}
           option={
+            onPressMore &&
             currentUserId === post.userId && (
               <Pressable onPress={onPressMore}>
                 <AntDesign name="more" size={24} color="black" />
               </Pressable>
             )
           }
+          defaultUserAvatar={defaultUserAvatar}
         />
       </View>
       <View style={styles.contentContainer}>
@@ -133,7 +144,7 @@ export function FeedItemView({
           <Ionicons name="eye-outline" size={16} color="black" />
         </IconItem>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
