@@ -1,6 +1,7 @@
 import { colors } from "@/components";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, Stack } from "expo-router";
+import { Link, router, Stack } from "expo-router";
+import { Pressable } from "react-native";
 
 export default function PostLayout() {
   return (
@@ -9,6 +10,22 @@ export default function PostLayout() {
         contentStyle: { backgroundColor: colors.WHITE },
       }}
     >
+      <Stack.Screen
+        name="[id]"
+        options={{
+          headerShown: true,
+          title: null,
+          headerLeft: () => (
+            <Pressable
+              onPress={() =>
+                router.canGoBack() ? router.back() : router.replace("/")
+              }
+            >
+              <Ionicons name="chevron-back" size={24} color="black" />
+            </Pressable>
+          ),
+        }}
+      />
       <Stack.Screen
         name="write"
         options={{

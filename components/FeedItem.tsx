@@ -39,7 +39,9 @@ export default function FeedItem({ post }: FeedItemProps) {
     <FeedItemView
       post={post}
       currentUserId={Number(auth.id)}
-      onPress={() => {}}
+      onPress={() => {
+        router.push(`/post/${post.id}`);
+      }}
       onPressMore={() => {
         showActionSheetWithOptions(
           {
