@@ -30,6 +30,7 @@
     "@storybook/addon-ondevice-controls": "^10.2.3",
     "@storybook/react-native": "^10.2.3",
     "@tanstack/react-query": "^5.91.3",
+    "@zamplyy/react-native-nice-avatar": "^1.1.2",
     "axios": "^1.13.6",
     "babel-loader": "^8.4.1",
     "dayjs": "^1.11.20",
