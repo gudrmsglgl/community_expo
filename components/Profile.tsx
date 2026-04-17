@@ -1,11 +1,19 @@
-import DefaultAvatar from "@/assets/images/default-avatar.svg";
+import Avatar, {
+  genConfig,
+  NiceAvatarProps,
+} from "@zamplyy/react-native-nice-avatar";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { SvgProps } from "react-native-svg";
 import { colors } from "./index";
+
+const AVATAR_SIZE = 50;
+
 interface ProfileProps {
   onPress: () => void;
   imageUri?: string;
   nickname: string;
   createdAt: string;
+  defaultUserAvatar?: React.ComponentType<NiceAvatarProps | SvgProps>;
   option?: React.ReactNode;
 }
 
@@ -14,15 +22,29 @@ export default function Profile({
   imageUri,
   nickname,
   createdAt,
+  defaultUserAvatar,
   option,
 }: ProfileProps) {
+  const config = genConfig({
+    bgColor: colors.Grey_100,
+  });
+
+  const renderDefaultAvatar = () => {
+    if (defaultUserAvatar) {
+      const DefaultAvatarComponent = defaultUserAvatar;
+      return <DefaultAvatarComponent />;
+    }
+
+    return <Avatar size={AVATAR_SIZE} {...config} />;
+  };
+
   return (
     <View style={styles.container}>
       <Pressable onPress={onPress} style={styles.profileContainer}>
         {imageUri ? (
           <Image source={{ uri: imageUri }} style={styles.image} />
         ) : (
-          <DefaultAvatar style={styles.image} width={50} height={50} />
+          renderDefaultAvatar()
         )}
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{nickname}</Text>
