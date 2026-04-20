@@ -6,15 +6,20 @@ import InputField from "@/components/InputField";
 import useAuth from "@/hooks/queries/useAuth";
 import useCreateComment from "@/hooks/useCreateComment";
 import useGetPost from "@/hooks/useGetPost";
+import useKeyboardVisible from "@/hooks/useKeyboardVisible";
 import { Comment } from "@/types";
+import Ionicons from "@expo/vector-icons/build/Ionicons";
 import { useLocalSearchParams } from "expo-router";
-import { useRef, useState } from "react";
+import { ForwardedRef, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Keyboard,
+  LayoutChangeEvent,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -22,7 +27,7 @@ import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
 } from "react-native-keyboard-controller";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function PostScreen() {
   const {
@@ -30,19 +35,45 @@ export default function PostScreen() {
   } = useAuth();
 
   const scrollViewRef = useRef<ScrollView | null>(null);
+  const commentLayoutsRef = useRef<
+    Record<number, { y: number; height: number }>
+  >({});
+  const inputCommentRef = useRef<TextInput | null>(null);
+  const isKeyboardVisible = useKeyboardVisible();
 
   const { id } = useLocalSearchParams();
   const { data: post, isLoading } = useGetPost(Number(id));
   const { mutate: createCommentMutation } = useCreateComment();
 
+  const [replyTargetComment, setReplyTargetComment] = useState<Comment | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (replyTargetComment) {
+      inputCommentRef.current?.focus();
+      return;
+    }
+
+    inputCommentRef.current?.blur();
+  }, [replyTargetComment]);
+
+  useScrollToReplyTargetCommentEffect(
+    isKeyboardVisible,
+    replyTargetComment,
+    commentLayoutsRef.current[replyTargetComment?.id],
+    scrollViewRef,
+  );
+
   if (isLoading) return <ActivityIndicator />;
   return (
-    <SafeAreaView edges={["bottom"]} style={styles.container}>
+    <View style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
           <KeyboardAwareScrollView
             ref={scrollViewRef}
             keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ paddingBottom: 50 }}
           >
             <FeedItemView post={post} currentUserId={Number(userId)} />
             <Divider height="big" />
@@ -54,61 +85,89 @@ export default function PostScreen() {
             <CommentList
               comments={post.comments || []}
               currentUserId={Number(userId)}
+              onCommentLayout={(commentId, layout) => {
+                commentLayoutsRef.current[commentId] = layout;
+              }}
+              onReply={(comment) => {
+                setReplyTargetComment(comment);
+              }}
             />
           </KeyboardAwareScrollView>
 
           <KeyboardStickyView>
             <BottomInputComment
+              inputRef={inputCommentRef}
+              isKeyboardVisible={isKeyboardVisible}
+              replyTargetComment={replyTargetComment}
+              onCancelReply={() => {
+                setReplyTargetComment(null);
+              }}
               onSubmit={(text) => {
-                createCommentMutation(
-                  {
-                    content: text,
-                    postId: post.id,
-                  },
-                  {
-                    onSuccess: () => {
-                      setTimeout(() => {
-                        scrollViewRef.current?.scrollToEnd({ animated: true });
-                      }, 100);
-                    },
-                  },
-                );
+                createCommentMutation({
+                  content: text,
+                  postId: post.id,
+                });
               }}
             />
           </KeyboardStickyView>
         </View>
       </TouchableWithoutFeedback>
-    </SafeAreaView>
+    </View>
   );
 }
 
 function CommentList({
   comments,
   currentUserId,
+  onCommentLayout,
+  onReply,
 }: {
   comments: Comment[];
   currentUserId: number;
+  onCommentLayout: (
+    commentId: number,
+    layout: { y: number; height: number },
+  ) => void;
+  onReply: (comment: Comment) => void;
 }) {
   return comments.map((comment, index) => (
-    <View key={comment.id}>
+    <View
+      key={comment.id}
+      onLayout={(e: LayoutChangeEvent) => {
+        onCommentLayout(comment.id, {
+          y: e.nativeEvent.layout.y,
+          height: e.nativeEvent.layout.height,
+        });
+      }}
+    >
       {index === 0 && <Divider height="hairline" />}
       <View style={{ marginBottom: 9 }}>
         <CommentItem
           key={comment.id}
           comment={comment}
           currentUserId={currentUserId}
+          onReply={() => {
+            onReply(comment);
+          }}
         />
       </View>
-
       {index !== comments.length - 1 && <Divider height="hairline" />}
     </View>
   ));
 }
 
 function BottomInputComment({
+  replyTargetComment,
   onSubmit,
+  onCancelReply,
+  inputRef,
+  isKeyboardVisible,
 }: {
+  replyTargetComment?: Comment;
   onSubmit: (text: string) => void;
+  onCancelReply: () => void;
+  inputRef: ForwardedRef<TextInput>;
+  isKeyboardVisible: boolean;
 }) {
   const [comment, setComment] = useState("");
 
@@ -118,9 +177,40 @@ function BottomInputComment({
     Keyboard.dismiss();
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.inputCommentContainer}>
+    <View
+      style={[
+        styles.inputCommentContainer,
+        { paddingBottom: isKeyboardVisible ? 10 : insets.bottom },
+      ]}
+    >
+      {replyTargetComment && (
+        <Pressable
+          style={styles.replyTargetCommentContainer}
+          onPress={onCancelReply}
+        >
+          <Text
+            style={styles.replyTargetUsername}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            @{replyTargetComment.user.nickname}
+          </Text>
+          <Text style={{ flex: 1, color: colors.Grey_700, fontSize: 13 }}>
+            님에게 댓글 남기는 중
+          </Text>
+          <Ionicons
+            name="close-circle-outline"
+            size={20}
+            color="black"
+            style={{ marginEnd: 13 }}
+          />
+        </Pressable>
+      )}
       <InputField
+        ref={inputRef}
         placeholder="댓글을 남겨보세요."
         variant="Filled"
         value={comment}
@@ -154,6 +244,35 @@ function Divider({ height }: { height: DivierHeight }) {
   );
 }
 
+function useScrollToReplyTargetCommentEffect(
+  isKeyboardVisible: boolean,
+  replyTargetComment?: Comment,
+  targetCommentLayout?: { y: number; height: number },
+  scrollViewRef?: React.RefObject<ScrollView>,
+) {
+  useEffect(() => {
+    if (
+      !replyTargetComment ||
+      !isKeyboardVisible ||
+      !targetCommentLayout ||
+      !scrollViewRef
+    )
+      return;
+
+    requestAnimationFrame(() => {
+      scrollViewRef.current.scrollTo({
+        y: targetCommentLayout.y,
+        animated: true,
+      });
+    });
+  }, [
+    isKeyboardVisible,
+    replyTargetComment,
+    targetCommentLayout,
+    scrollViewRef,
+  ]);
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -166,8 +285,28 @@ const styles = StyleSheet.create({
   inputCommentContainer: {
     width: "100%",
     paddingHorizontal: 16,
-    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingTop: 10,
+    borderTopWidth: 1,
     borderTopColor: colors.Grey_200,
+    backgroundColor: colors.WHITE,
+  },
+  replyTargetCommentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: colors.Grey_300,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  replyTargetUsername: {
+    backgroundColor: colors.ORANGE_600,
+    borderRadius: 10,
+    borderBottomLeftRadius: 0,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    color: colors.WHITE,
+    maxWidth: "30%",
   },
   divider: {
     backgroundColor: colors.Grey_200,

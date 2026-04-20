@@ -16,12 +16,14 @@ interface CommentProps {
   comment: Comment;
   isReply?: boolean;
   currentUserId: number;
+  onReply: () => void;
 }
 
 export default function CommentItem({
   comment,
   isReply = false,
   currentUserId,
+  onReply,
 }: CommentProps) {
   const { mutate: deleteCommmentMutation } = useDeleteComment();
   const showToast = useAppToast();
@@ -38,6 +40,7 @@ export default function CommentItem({
           },
         });
       }}
+      onReply={onReply}
     />
   );
 }
@@ -47,8 +50,10 @@ export function CommentItemView({
   isReply = false,
   currentUserId,
   onDelete,
+  onReply,
 }: CommentProps & {
   onDelete: () => void;
+  onReply: () => void;
 }) {
   return (
     <View style={styles.container}>
@@ -91,6 +96,7 @@ export function CommentItemView({
           title="답글 남기기"
           size="Small"
           style={styles.replyButton}
+          onPress={onReply}
         />
       )}
     </View>
@@ -146,11 +152,13 @@ const styles = StyleSheet.create({
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 8,
   },
   profileReplyContainer: {
     flexDirection: "row",
     alignItems: "center",
     width: "90%",
+    marginBottom: 8,
   },
   replyButton: {
     paddingTop: 8,
