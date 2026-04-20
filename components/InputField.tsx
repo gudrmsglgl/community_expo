@@ -27,7 +27,7 @@ function InputField(
 ) {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      {label && <Text style={styles.label}>{label}</Text>}
       <View
         style={[
           styles.inputContainer,
