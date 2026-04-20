@@ -4,9 +4,8 @@ import Avatar, {
 } from "@zamplyy/react-native-nice-avatar";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { SvgProps } from "react-native-svg";
+import { AVATAR_SIZE } from "./Avatar";
 import { colors } from "./index";
-
-const AVATAR_SIZE = 50;
 
 interface ProfileProps {
   onPress: () => void;
