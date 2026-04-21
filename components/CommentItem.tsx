@@ -1,11 +1,11 @@
 import useAppToast from "@/hooks/useAppToast";
 import useDeleteComment from "@/hooks/useDeleteComment";
-import { Comment } from "@/types";
+import { PostComment } from "@/types";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from ".";
 import { DefaultDeletedAvatar, DefaultRandomAvatar } from "./Avatar";
 import CTAButton from "./CTAButton";
@@ -14,11 +14,12 @@ import Profile from "./Profile";
 dayjs.extend(relativeTime);
 
 interface CommentProps {
-  comment: Comment;
+  comment: PostComment;
   isReplyCommentComponent?: boolean;
   currentUserId: number;
   shouldShowReplyTargetComment?: boolean;
-  onReply: () => void;
+  onMoreChildrenComments?: () => void;
+  onReply?: () => void;
 }
 
 export default function CommentItem({
@@ -26,6 +27,7 @@ export default function CommentItem({
   isReplyCommentComponent = false,
   currentUserId,
   shouldShowReplyTargetComment = false,
+  onMoreChildrenComments,
   onReply,
 }: CommentProps) {
   const { mutate: deleteCommmentMutation } = useDeleteComment();
@@ -45,6 +47,7 @@ export default function CommentItem({
         });
       }}
       onReply={onReply}
+      onMoreChildrenComments={onMoreChildrenComments}
     />
   );
 }
@@ -56,9 +59,10 @@ export function CommentItemView({
   currentUserId,
   onDelete,
   onReply,
+  onMoreChildrenComments,
 }: CommentProps & {
   onDelete: () => void;
-  onReply: () => void;
+  onReply?: () => void;
 }) {
   return (
     <View
@@ -104,14 +108,33 @@ export function CommentItemView({
         value={comment.isDeleted ? "삭제된 댓글입니다." : comment.content}
         editable={false}
       />
+
       {!isReplyCommentComponent && !comment.isDeleted && (
-        <CTAButton
-          variant="Standard"
-          title="답글 남기기"
-          size="Small"
-          style={styles.replyButton}
-          onPress={onReply}
-        />
+        <View style={styles.bottomContainer}>
+          <CTAButton
+            variant="Standard"
+            title="답글 남기기"
+            size="Small"
+            onPress={onReply}
+          />
+          <Pressable
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+            onPress={onMoreChildrenComments}
+          >
+            <View>
+              <MaterialCommunityIcons
+                name="comment-text-outline"
+                size={15}
+                color="black"
+              />
+            </View>
+
+            <Text>{comment.replies.length}</Text>
+          </Pressable>
+        </View>
       )}
     </View>
   );
@@ -175,8 +198,11 @@ const styles = StyleSheet.create({
     width: "90%",
     marginBottom: 8,
   },
-  replyButton: {
-    paddingTop: 8,
-    paddingLeft: 8,
+  bottomContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 8,
+    paddingHorizontal: 8,
   },
 });
