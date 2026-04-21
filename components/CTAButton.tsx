@@ -86,7 +86,8 @@ const styles = StyleSheet.create({
     height: 38,
   },
   Small: {
-    width: 40,
+    minWidth: 40,
+    maxWidth: 60,
     height: 28,
     alignSelf: "flex-start",
     justifyContent: "center",
