@@ -1,4 +1,5 @@
 import { colors } from "@/components";
+import VerticalSlideAnimated from "@/components/animated/VerticalSlideAnimated";
 import CommentItem from "@/components/CommentItem";
 import CTAButton from "@/components/CTAButton";
 import { FeedItemView } from "@/components/FeedItem";
@@ -7,7 +8,7 @@ import useAuth from "@/hooks/queries/useAuth";
 import useCreateComment from "@/hooks/useCreateComment";
 import useGetPost from "@/hooks/useGetPost";
 import useKeyboardVisible from "@/hooks/useKeyboardVisible";
-import { Comment } from "@/types";
+import { Comment, PostComment } from "@/types";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
 import { useLocalSearchParams } from "expo-router";
 import { ForwardedRef, useEffect, useRef, useState } from "react";
@@ -20,7 +21,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import {
@@ -68,50 +68,51 @@ export default function PostScreen() {
   if (isLoading) return <ActivityIndicator />;
   return (
     <View style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={styles.container}>
-          <KeyboardAwareScrollView
-            ref={scrollViewRef}
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{ paddingBottom: 50 }}
-          >
-            <FeedItemView post={post} currentUserId={Number(userId)} />
-            <Divider height="big" />
-            <View style={styles.commentCountContainer}>
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                {post.commentCount}개의 댓글
-              </Text>
-            </View>
-            <CommentList
-              comments={post.comments || []}
-              currentUserId={Number(userId)}
-              onCommentLayout={(commentId, layout) => {
-                commentLayoutsRef.current[commentId] = layout;
-              }}
-              onReply={(comment) => {
-                setReplyTargetComment(comment);
-              }}
-            />
-          </KeyboardAwareScrollView>
+      <View style={styles.container}>
+        <KeyboardAwareScrollView
+          ref={scrollViewRef}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingBottom: 50 }}
+          keyboardDismissMode="interactive"
+        >
+          <FeedItemView post={post} currentUserId={Number(userId)} />
+          <Divider height="big" />
+          <View style={styles.commentCountContainer}>
+            <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+              {post.commentCount}개의 댓글
+            </Text>
+          </View>
+          <CommentList
+            comments={post.comments || []}
+            currentUserId={Number(userId)}
+            replyTargetComment={replyTargetComment}
+            onCommentLayout={(commentId, layout) => {
+              commentLayoutsRef.current[commentId] = layout;
+            }}
+            onReply={(comment) => {
+              setReplyTargetComment(comment);
+            }}
+          />
+        </KeyboardAwareScrollView>
 
-          <KeyboardStickyView>
-            <BottomInputComment
-              inputRef={inputCommentRef}
-              isKeyboardVisible={isKeyboardVisible}
-              replyTargetComment={replyTargetComment}
-              onCancelReply={() => {
-                setReplyTargetComment(null);
-              }}
-              onSubmit={(text) => {
-                createCommentMutation({
-                  content: text,
-                  postId: post.id,
-                });
-              }}
-            />
-          </KeyboardStickyView>
-        </View>
-      </TouchableWithoutFeedback>
+        <KeyboardStickyView>
+          <BottomInputComment
+            inputRef={inputCommentRef}
+            isKeyboardVisible={isKeyboardVisible}
+            replyTargetComment={replyTargetComment}
+            onCancelReply={() => {
+              setReplyTargetComment(null);
+            }}
+            onSubmit={(text) => {
+              createCommentMutation({
+                parentCommentId: replyTargetComment?.id,
+                content: text,
+                postId: post.id,
+              });
+            }}
+          />
+        </KeyboardStickyView>
+      </View>
     </View>
   );
 }
@@ -119,41 +120,62 @@ export default function PostScreen() {
 function CommentList({
   comments,
   currentUserId,
+  replyTargetComment,
   onCommentLayout,
   onReply,
 }: {
-  comments: Comment[];
+  comments: PostComment[];
   currentUserId: number;
+  replyTargetComment?: Comment;
   onCommentLayout: (
     commentId: number,
     layout: { y: number; height: number },
   ) => void;
   onReply: (comment: Comment) => void;
 }) {
-  return comments.map((comment, index) => (
-    <View
-      key={comment.id}
-      onLayout={(e: LayoutChangeEvent) => {
-        onCommentLayout(comment.id, {
-          y: e.nativeEvent.layout.y,
-          height: e.nativeEvent.layout.height,
-        });
-      }}
-    >
-      {index === 0 && <Divider height="hairline" />}
-      <View style={{ marginBottom: 9 }}>
+  const [showChildrenComments, setShowChildrenComments] = useState(false);
+
+  return comments.map((comment, index) => {
+    const hasReplies = comment.replies?.length > 0;
+    return (
+      <View
+        key={comment.id}
+        onLayout={(e: LayoutChangeEvent) => {
+          onCommentLayout(comment.id, {
+            y: e.nativeEvent.layout.y,
+            height: e.nativeEvent.layout.height,
+          });
+        }}
+      >
+        {index === 0 && <Divider height="hairline" />}
         <CommentItem
           key={comment.id}
           comment={comment}
+          shouldShowReplyTargetComment={replyTargetComment === comment}
           currentUserId={currentUserId}
           onReply={() => {
             onReply(comment);
           }}
+          onMoreChildrenComments={() => {
+            setShowChildrenComments((prev) => !prev);
+          }}
         />
+        {index !== comments.length - 1 && <Divider height="hairline" />}
+        {hasReplies && (
+          <VerticalSlideAnimated visible={showChildrenComments}>
+            {comment.replies.map((reply: PostComment) => (
+              <CommentItem
+                key={reply.id}
+                comment={reply}
+                currentUserId={currentUserId}
+                isReplyCommentComponent={true}
+              />
+            ))}
+          </VerticalSlideAnimated>
+        )}
       </View>
-      {index !== comments.length - 1 && <Divider height="hairline" />}
-    </View>
-  ));
+    );
+  });
 }
 
 function BottomInputComment({
