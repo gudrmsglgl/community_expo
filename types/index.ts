@@ -88,6 +88,7 @@ export type {
   CreateVoteDto,
   ImageUri,
   Post,
+  PostComment,
   PostVote,
   PostVoteOption,
   Profile,
