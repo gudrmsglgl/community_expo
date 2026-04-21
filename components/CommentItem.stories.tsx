@@ -53,7 +53,7 @@ export const ReplyComment: Story = {
       },
       isDeleted: false,
     },
-    isReply: true,
+    isReplyCommentComponent: true,
     currentUserId: 1,
   },
 };
@@ -72,5 +72,23 @@ export const DeletedComment: Story = {
       isDeleted: true,
     },
     currentUserId: 1,
+  },
+};
+
+export const ReplyTargetComment: Story = {
+  args: {
+    comment: {
+      id: 1,
+      content: "삭제된 댓글",
+      createdAt: "2026-04-16",
+      user: {
+        id: 1,
+        nickname: "작성자",
+        imageUri: undefined,
+      },
+      isDeleted: false,
+    },
+    currentUserId: 1,
+    shouldShowReplyTargetComment: true,
   },
 };

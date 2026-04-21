@@ -6,6 +6,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { StyleSheet, View } from "react-native";
+import { colors } from ".";
 import { DefaultDeletedAvatar, DefaultRandomAvatar } from "./Avatar";
 import CTAButton from "./CTAButton";
 import InputField from "./InputField";
@@ -14,15 +15,17 @@ dayjs.extend(relativeTime);
 
 interface CommentProps {
   comment: Comment;
-  isReply?: boolean;
+  isReplyCommentComponent?: boolean;
   currentUserId: number;
+  shouldShowReplyTargetComment?: boolean;
   onReply: () => void;
 }
 
 export default function CommentItem({
   comment,
-  isReply = false,
+  isReplyCommentComponent = false,
   currentUserId,
+  shouldShowReplyTargetComment = false,
   onReply,
 }: CommentProps) {
   const { mutate: deleteCommmentMutation } = useDeleteComment();
@@ -31,8 +34,9 @@ export default function CommentItem({
   return (
     <CommentItemView
       comment={comment}
-      isReply={isReply}
+      isReplyCommentComponent={isReplyCommentComponent}
       currentUserId={currentUserId}
+      shouldShowReplyTargetComment={shouldShowReplyTargetComment}
       onDelete={() => {
         deleteCommmentMutation(comment.id, {
           onSuccess: () => {
@@ -47,7 +51,8 @@ export default function CommentItem({
 
 export function CommentItemView({
   comment,
-  isReply = false,
+  isReplyCommentComponent = false,
+  shouldShowReplyTargetComment = false,
   currentUserId,
   onDelete,
   onReply,
@@ -56,11 +61,20 @@ export function CommentItemView({
   onReply: () => void;
 }) {
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        shouldShowReplyTargetComment && { backgroundColor: colors.ORANGE_100 },
+      ]}
+    >
       <View
-        style={isReply ? styles.profileReplyContainer : styles.profileContainer}
+        style={
+          isReplyCommentComponent
+            ? styles.profileReplyContainer
+            : styles.profileContainer
+        }
       >
-        {isReply && (
+        {isReplyCommentComponent && (
           <MaterialCommunityIcons
             name="arrow-right-bottom"
             size={24}
@@ -90,7 +104,7 @@ export function CommentItemView({
         value={comment.isDeleted ? "삭제된 댓글입니다." : comment.content}
         editable={false}
       />
-      {!isReply && !comment.isDeleted && (
+      {!isReplyCommentComponent && !comment.isDeleted && (
         <CTAButton
           variant="Standard"
           title="답글 남기기"
@@ -148,6 +162,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     paddingTop: 16,
+    paddingBottom: 9,
   },
   profileContainer: {
     flexDirection: "row",
