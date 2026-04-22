@@ -32,6 +32,10 @@ function useLogin() {
       queryClient.fetchQuery({
         queryKey: [queryKey.AUTH, queryKey.GET_ME],
       });
+      if (router.canGoBack()) {
+        router.back();
+        return;
+      }
       router.replace("/");
     },
   });
