@@ -62,7 +62,6 @@ export default function FeedItem({ post }: FeedItemProps) {
           (index) => {
             switch (index) {
               case 0:
-                console.log("삭제");
                 deletePostMutation.mutate(post.id.toString(), {
                   onSuccess: () => {
                     showToast("게시글이 삭제되었습니다.");
@@ -70,11 +69,9 @@ export default function FeedItem({ post }: FeedItemProps) {
                 });
                 break;
               case 1:
-                console.log("수정");
                 router.push(`/post/edit/${post.id}`);
                 break;
               case 2:
-                console.log("취소");
                 break;
               default:
                 break;
