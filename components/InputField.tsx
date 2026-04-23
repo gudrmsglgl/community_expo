@@ -42,6 +42,7 @@ function InputField(
           autoCorrect={false}
           autoCapitalize="none"
           spellCheck={false}
+          textAlignVertical="top"
           {...props}
         />
         <View style={styles.tailOptionsContainer}>{tailOptions}</View>
