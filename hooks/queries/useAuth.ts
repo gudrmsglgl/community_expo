@@ -11,7 +11,7 @@ import {
   saveAccessToken,
 } from "@/utils/secureStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { useEffect } from "react";
 
 function useSignup() {
@@ -24,6 +24,8 @@ function useSignup() {
 }
 
 function useLogin() {
+  const nav = useNavigation();
+
   return useMutation({
     mutationFn: postLogin,
     onSuccess: async ({ accessToken }) => {
@@ -32,11 +34,26 @@ function useLogin() {
       queryClient.fetchQuery({
         queryKey: [queryKey.AUTH, queryKey.GET_ME],
       });
+
+      const state = nav.getState();
+      const prevRoute = state?.routes?.[state?.index - 1];
+      const prevName = prevRoute?.name as string | undefined;
+      const isPrevAuthIndex = prevName === "index";
+
+      if (isPrevAuthIndex) {
+        router.replace("/");
+        return;
+      }
+
       if (router.canGoBack()) {
         router.back();
         return;
       }
+
       router.replace("/");
+    },
+    onError: (error) => {
+      console.log("error", error);
     },
   });
 }
