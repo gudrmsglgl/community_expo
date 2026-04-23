@@ -19,6 +19,7 @@ import { SvgProps } from "react-native-svg";
 import { colors } from ".";
 import { Post } from "../types";
 import { DefaultRandomAvatar } from "./Avatar";
+import ImagePreviewList from "./ImagePreviewList";
 import Profile from "./Profile";
 dayjs.extend(relativeTime);
 
@@ -124,6 +125,10 @@ export function FeedItemView({
           {post.description}
         </Text>
       </View>
+      <View style={styles.imagePreviewListContainer}>
+        <ImagePreviewList imageUris={post.imageUris} />
+      </View>
+
       <View style={styles.iconContainer}>
         <IconItem count={post.likes.length} isActive={isLiked}>
           <Octicons
@@ -177,6 +182,10 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: 16,
     paddingTop: 28,
+  },
+  imagePreviewListContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 14,
   },
   title: {
     fontSize: 18,
