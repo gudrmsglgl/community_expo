@@ -104,11 +104,18 @@ export default function PostScreen() {
               setReplyTargetComment(null);
             }}
             onSubmit={(text) => {
-              createCommentMutation({
-                parentCommentId: replyTargetComment?.id,
-                content: text,
-                postId: post.id,
-              });
+              createCommentMutation(
+                {
+                  parentCommentId: replyTargetComment?.id,
+                  content: text,
+                  postId: post.id,
+                },
+                {
+                  onSuccess: () => {
+                    setReplyTargetComment(null);
+                  },
+                },
+              );
             }}
           />
         </KeyboardStickyView>
