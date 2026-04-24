@@ -1,5 +1,9 @@
 import CTAButton from "@/components/CTAButton";
+import PostWriteFooter from "@/components/form/PostWriteFooter";
 import RHFInputField from "@/components/form/RHFInputField";
+import VoteModal from "@/components/form/VoteModal";
+import ImagePreviewList from "@/components/ImagePreviewList";
+import VoteAttached from "@/components/VoteAttached";
 import useAppToast from "@/hooks/useAppToast";
 import useGetPost from "@/hooks/useGetPost";
 import useUpdatePost from "@/hooks/useUpdatePost";
@@ -28,6 +32,10 @@ export default function EditPostScreen() {
     defaultValues: {
       title: "",
       description: "",
+      imageUris: [],
+      isVoteAttached: false,
+      isVoteOpen: false,
+      voteOptions: [],
     },
   });
 
@@ -40,7 +48,19 @@ export default function EditPostScreen() {
   useEffect(() => {
     if (!post) return;
 
-    reset(post);
+    reset({
+      title: post.title,
+      description: post.description,
+      imageUris: post.imageUris,
+      isVoteAttached: post.hasVote,
+      isVoteOpen: false,
+      voteOptions:
+        post.votes?.[0]?.options?.map((option) => ({
+          id: option.id,
+          displayPriority: option.displayPriority,
+          content: option.content,
+        })) ?? [],
+    });
   }, [post, reset]);
 
   const onSubmit = (data: WritePostSchema) => {
@@ -93,9 +113,20 @@ export default function EditPostScreen() {
               placeholder="내용을 입력해주세요."
               multiline
             />
+            {editPostForm.watch().isVoteAttached && (
+              <VoteAttached
+                onRemoveVote={() => {
+                  editPostForm.setValue("isVoteAttached", false);
+                  editPostForm.resetField("voteOptions");
+                }}
+              />
+            )}
+            <ImagePreviewList imageUris={editPostForm.watch().imageUris} />
           </View>
         </KeyboardAwareScrollView>
       </TouchableWithoutFeedback>
+      <PostWriteFooter />
+      <VoteModal />
     </FormProvider>
   );
 }

@@ -1,27 +1,22 @@
-import { colors } from "@/components";
 import CTAButton from "@/components/CTAButton";
+import PostWriteFooter from "@/components/form/PostWriteFooter";
 import RHFInputField from "@/components/form/RHFInputField";
+import VoteModal from "@/components/form/VoteModal";
 import ImagePreviewList from "@/components/ImagePreviewList";
+import VoteAttached from "@/components/VoteAttached";
 import useCreatePost from "@/hooks/useCreatePost";
-import useUploadImages from "@/hooks/useUploadImages";
 import { writePostSchema, WritePostSchema } from "@/schemas/writePostSchemas";
-import { getFormDataImages } from "@/utils/image";
-import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "expo-router";
 import { useEffect } from "react";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import {
-  Alert,
   Keyboard,
-  Pressable,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function WriteScreen() {
   const useCreatePostMutation = useCreatePost();
@@ -32,6 +27,9 @@ export default function WriteScreen() {
       title: "",
       description: "",
       imageUris: [],
+      isVoteOpen: false,
+      isVoteAttached: false,
+      voteOptions: [{ displayPriority: 0, content: "" }],
     },
   });
 
@@ -75,66 +73,21 @@ export default function WriteScreen() {
               placeholder="내용을 입력해주세요."
               multiline
             />
+            {writePostForm.watch().isVoteAttached && (
+              <VoteAttached
+                onRemoveVote={() => {
+                  writePostForm.setValue("isVoteAttached", false);
+                  writePostForm.resetField("voteOptions");
+                }}
+              />
+            )}
             <ImagePreviewList imageUris={writePostForm.watch().imageUris} />
           </View>
         </KeyboardAwareScrollView>
       </TouchableWithoutFeedback>
-      <Footer />
+      <PostWriteFooter />
+      <VoteModal />
     </FormProvider>
-  );
-}
-
-function Footer() {
-  const insets = useSafeAreaInsets();
-  const { mutate: uploadImageMutation } = useUploadImages();
-  const { setValue, getValues } = useFormContext<WritePostSchema>();
-
-  const addImageUrisToForm = (data: string[]) => {
-    const currentImageUris = getValues("imageUris");
-    if (currentImageUris.length + data.length > 5) {
-      Alert.alert("이미지는 최대 5개까지 추가할 수 있습니다.");
-      return;
-    }
-
-    setValue("imageUris", [
-      ...currentImageUris,
-      ...data.map((uri) => ({ uri })),
-    ]);
-  };
-
-  const onPressCamera = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: "images",
-      allowsMultipleSelection: true,
-    });
-
-    if (result.canceled) return;
-
-    const currentImageUris = getValues("imageUris");
-
-    if (currentImageUris.length + result.assets.length > 5) {
-      Alert.alert("이미지는 최대 5개까지 추가할 수 있습니다.");
-      return;
-    }
-
-    const formData = getFormDataImages("images", result.assets);
-
-    uploadImageMutation(formData, {
-      onSuccess: (data) => {
-        addImageUrisToForm(data);
-      },
-      onError: (error) => {
-        console.log("error: ", error);
-      },
-    });
-  };
-
-  return (
-    <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
-      <Pressable onPress={onPressCamera}>
-        <Ionicons name={"camera"} size={20} color={colors.BLACK} />
-      </Pressable>
-    </View>
   );
 }
 
@@ -142,15 +95,5 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     gap: 16,
-  },
-  footer: {
-    width: "100%",
-    paddingHorizontal: 16,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.Grey_300,
-    flexDirection: "row",
-    paddingTop: 12,
-    bottom: 12,
-    backgroundColor: colors.WHITE,
   },
 });
