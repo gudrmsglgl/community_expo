@@ -38,7 +38,14 @@ function InputField(
       >
         <TextInput
           ref={ref}
-          style={[styles.input]}
+          style={[
+            styles.input,
+            variant === "Outlined" && {
+              color: colors.ORANGE_600,
+              fontWeight: "bold",
+              fontSize: 14,
+            },
+          ]}
           autoCorrect={false}
           autoCapitalize="none"
           spellCheck={false}
@@ -75,6 +82,7 @@ const styles = StyleSheet.create({
   Standard: {
     borderWidth: 1,
     borderColor: colors.Grey_300,
+    borderRadius: 8,
   },
   error: {
     backgroundColor: colors.Red_100,
@@ -89,6 +97,7 @@ const styles = StyleSheet.create({
     color: colors.ORANGE_600,
     fontWeight: "bold",
     fontSize: 14,
+    borderRadius: 8,
   },
   multiline: {
     textAlignVertical: "top",
