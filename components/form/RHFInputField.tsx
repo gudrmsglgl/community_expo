@@ -1,3 +1,4 @@
+import { ReactElement } from "react";
 import {
   FieldPath,
   FieldValues,
@@ -9,14 +10,18 @@ import InputField from "../InputField";
 
 type Props<T extends FieldValues> = {
   name: FieldPath<T>;
-  label: string;
+  label?: string;
   nextFieldName?: FieldPath<T>;
+  variant?: "Filled" | "Outlined" | "Standard";
+  tailOptions?: ReactElement;
 } & TextInputProps;
 
 export default function RHFInputField<T extends FieldValues>({
   name,
   label,
   nextFieldName,
+  variant = "Filled",
+  tailOptions,
   returnKeyType,
   ...props
 }: Props<T>) {
@@ -34,12 +39,14 @@ export default function RHFInputField<T extends FieldValues>({
     <InputField
       ref={ref}
       label={label}
+      variant={variant}
       value={value ?? ""}
       onChangeText={onChange}
       errorHint={error?.message}
       submitBehavior={nextFieldName ? "submit" : undefined}
       returnKeyType={nextFieldName ? "next" : returnKeyType}
       onSubmitEditing={() => nextFieldName && setFocus(nextFieldName)}
+      tailOptions={tailOptions}
       {...props}
     />
   );
