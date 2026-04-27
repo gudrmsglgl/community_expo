@@ -1,4 +1,4 @@
-import { CreatePostDto, Post } from "@/types";
+import { CreatePostDto, CreateVoteDto, Post, VoteOption } from "@/types";
 import { RequestUpdatePost } from "@/types/api";
 import { axiosInstance } from "./axios";
 
@@ -27,5 +27,16 @@ export async function updatePost({
   body,
 }: RequestUpdatePost): Promise<number> {
   const { data } = await axiosInstance.patch(`/posts/${id}`, body);
+  return data;
+}
+
+export async function createVote({
+  postId,
+  voteOptionId,
+}: CreateVoteDto): Promise<{ postId: number; voteOption: VoteOption }> {
+  const { data } = await axiosInstance.post(
+    `/posts/${postId}/vote/${voteOptionId}`,
+  );
+
   return data;
 }
