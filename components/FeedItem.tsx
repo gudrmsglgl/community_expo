@@ -21,6 +21,10 @@ import { Post } from "../types";
 import { DefaultRandomAvatar } from "./Avatar";
 import ImagePreviewList from "./ImagePreviewList";
 import Profile from "./Profile";
+import {
+  ProfileVoteParticipantBoard,
+  VoteParticipationSummary,
+} from "./votes/Votes";
 dayjs.extend(relativeTime);
 
 dayjs.locale(ko);
@@ -84,17 +88,21 @@ export default function FeedItem({ post }: FeedItemProps) {
   );
 }
 
+type From = "home" | "profile";
+
 export function FeedItemView({
   post,
   currentUserId,
   onPress,
   onPressMore,
   defaultUserAvatar = currentUserId == post.author.id && DefaultRandomAvatar,
+  from = "home",
 }: FeedItemProps & {
   currentUserId: number;
   onPress?: () => void;
   onPressMore?: () => void;
   defaultUserAvatar?: React.ComponentType<NiceAvatarProps | SvgProps>;
+  from?: From;
 }) {
   const isLiked = post.likes.some(
     (like) => Number(like.userId) === Number(currentUserId),
@@ -128,6 +136,17 @@ export function FeedItemView({
       <View style={styles.imagePreviewListContainer}>
         <ImagePreviewList imageUris={post.imageUris} />
       </View>
+
+      {post.hasVote && from === "home" && (
+        <VoteParticipationSummary voteCount={post.voteCount} />
+      )}
+
+      {post.hasVote && from === "profile" && (
+        <ProfileVoteParticipantBoard
+          post={post}
+          currentUserId={currentUserId}
+        />
+      )}
 
       <View style={styles.iconContainer}>
         <IconItem count={post.likes.length} isActive={isLiked}>

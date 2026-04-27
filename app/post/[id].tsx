@@ -75,7 +75,11 @@ export default function PostScreen() {
           contentContainerStyle={{ paddingBottom: 50 }}
           keyboardDismissMode="interactive"
         >
-          <FeedItemView post={post} currentUserId={Number(userId)} />
+          <FeedItemView
+            post={post}
+            currentUserId={Number(userId)}
+            from="profile"
+          />
           <Divider height="big" />
           <View style={styles.commentCountContainer}>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
