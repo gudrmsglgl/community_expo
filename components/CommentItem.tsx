@@ -31,7 +31,7 @@ export default function CommentItem({
   onReply,
 }: CommentProps) {
   const { mutate: deleteCommmentMutation } = useDeleteComment();
-  const showToast = useAppToast();
+  const { successToast } = useAppToast();
 
   return (
     <CommentItemView
@@ -42,7 +42,7 @@ export default function CommentItem({
       onDelete={() => {
         deleteCommmentMutation(comment.id, {
           onSuccess: () => {
-            showToast("댓글이 삭제되었습니다.");
+            successToast("댓글이 삭제되었습니다.");
           },
         });
       }}

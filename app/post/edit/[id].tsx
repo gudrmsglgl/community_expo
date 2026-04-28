@@ -21,7 +21,7 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 export default function EditPostScreen() {
-  const showToast = useAppToast();
+  const { successToast } = useAppToast();
   const navigation = useNavigation();
   const { id } = useLocalSearchParams();
   const { data: post } = useGetPost(Number(id));
@@ -72,7 +72,7 @@ export default function EditPostScreen() {
       {
         onSuccess: () => {
           navigation.goBack();
-          showToast("게시글이 수정되었습니다.");
+          successToast("게시글이 수정되었습니다.");
         },
       },
     );
