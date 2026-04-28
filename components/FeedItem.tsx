@@ -1,6 +1,7 @@
 import useAuth from "@/hooks/queries/useAuth";
 import useAppToast from "@/hooks/useAppToast";
 import useDeletePost from "@/hooks/useDeletePost";
+import useLikePost from "@/hooks/useLikePost";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import {
   AntDesign,
@@ -35,7 +36,8 @@ interface FeedItemProps {
 export default function FeedItem({ post }: FeedItemProps) {
   const { auth } = useAuth();
   const deletePostMutation = useDeletePost();
-  const showToast = useAppToast();
+  const { successToast, warningToast } = useAppToast();
+  const { mutate: likePostMutation } = useLikePost();
 
   const insets = useSafeAreaInsets();
   const { showActionSheetWithOptions } = useActionSheet();
@@ -46,6 +48,14 @@ export default function FeedItem({ post }: FeedItemProps) {
       currentUserId={Number(auth.id)}
       onPress={() => {
         router.push(`/post/${post.id}`);
+      }}
+      onPressLike={(postId) => {
+        if (!auth.id) {
+          warningToast("로그인 후 이용해주세요.");
+          router.push("/auth/login");
+          return;
+        }
+        likePostMutation(postId);
       }}
       onPressMore={() => {
         showActionSheetWithOptions(
@@ -69,7 +79,7 @@ export default function FeedItem({ post }: FeedItemProps) {
               case 0:
                 deletePostMutation.mutate(post.id.toString(), {
                   onSuccess: () => {
-                    showToast("게시글이 삭제되었습니다.");
+                    successToast("게시글이 삭제되었습니다.");
                   },
                 });
                 break;
@@ -93,16 +103,18 @@ type From = "home" | "profile";
 export function FeedItemView({
   post,
   currentUserId,
-  onPress,
-  onPressMore,
   defaultUserAvatar = currentUserId == post.author.id && DefaultRandomAvatar,
   from = "home",
+  onPress,
+  onPressMore,
+  onPressLike,
 }: FeedItemProps & {
   currentUserId: number;
-  onPress?: () => void;
-  onPressMore?: () => void;
   defaultUserAvatar?: React.ComponentType<NiceAvatarProps | SvgProps>;
   from?: From;
+  onPress?: () => void;
+  onPressMore?: () => void;
+  onPressLike?: (postId: number) => void;
 }) {
   const isLiked = post.likes.some(
     (like) => Number(like.userId) === Number(currentUserId),
@@ -149,7 +161,11 @@ export function FeedItemView({
       )}
 
       <View style={styles.iconContainer}>
-        <IconItem count={post.likes.length} isActive={isLiked}>
+        <IconItem
+          count={post.likes.length}
+          isActive={isLiked}
+          onPress={() => onPressLike?.(post.id)}
+        >
           <Octicons
             name={isLiked ? "heart-fill" : "heart"}
             size={16}
@@ -175,13 +191,15 @@ function IconItem({
   children,
   count,
   isActive = false,
+  onPress,
 }: {
   children: React.ReactNode;
   count: number;
   isActive?: boolean;
+  onPress?: () => void;
 }) {
   return (
-    <Pressable style={styles.iconItem}>
+    <Pressable style={styles.iconItem} onPress={onPress}>
       {children}
       <Text style={isActive ? styles.activeMenuText : styles.menuText}>
         {count}

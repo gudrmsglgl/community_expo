@@ -5,12 +5,14 @@ import CTAButton from "@/components/CTAButton";
 import { FeedItemView } from "@/components/FeedItem";
 import InputField from "@/components/InputField";
 import useAuth from "@/hooks/queries/useAuth";
+import useAppToast from "@/hooks/useAppToast";
 import useCreateComment from "@/hooks/useCreateComment";
 import useGetPost from "@/hooks/useGetPost";
 import useKeyboardVisible from "@/hooks/useKeyboardVisible";
+import useLikePost from "@/hooks/useLikePost";
 import { Comment, PostComment } from "@/types";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { ForwardedRef, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -34,6 +36,7 @@ export default function PostScreen() {
     auth: { id: userId },
   } = useAuth();
 
+  const { warningToast } = useAppToast();
   const scrollViewRef = useRef<ScrollView | null>(null);
   const commentLayoutsRef = useRef<
     Record<number, { y: number; height: number }>
@@ -44,6 +47,7 @@ export default function PostScreen() {
   const { id } = useLocalSearchParams();
   const { data: post, isLoading } = useGetPost(Number(id));
   const { mutate: createCommentMutation } = useCreateComment();
+  const { mutate: likePostMutation } = useLikePost();
 
   const [replyTargetComment, setReplyTargetComment] = useState<Comment | null>(
     null,
@@ -79,6 +83,14 @@ export default function PostScreen() {
             post={post}
             currentUserId={Number(userId)}
             from="profile"
+            onPressLike={(postId) => {
+              if (!userId) {
+                warningToast("로그인 후 이용해주세요.");
+                router.push("/auth/login");
+                return;
+              }
+              likePostMutation(postId);
+            }}
           />
           <Divider height="big" />
           <View style={styles.commentCountContainer}>
