@@ -45,3 +45,8 @@ export async function likePost(id: number): Promise<number> {
   const { data } = await axiosInstance.post(`/likes/${id}`);
   return data;
 }
+
+export async function getLikedPosts(page = 1): Promise<Post[]> {
+  const { data } = await axiosInstance.get(`/likes?page=${page}`);
+  return data;
+}
