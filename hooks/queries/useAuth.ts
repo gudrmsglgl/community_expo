@@ -97,6 +97,9 @@ export default function useAuth() {
   return {
     auth: {
       id: data?.id || "",
+      thumbnailUri: data?.imageUri,
+      nickname: data?.nickname,
+      introduce: data?.introduce,
     },
     signupMutation,
     loginMutation,
