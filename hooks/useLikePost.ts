@@ -41,6 +41,9 @@ export default function useLikePost() {
       queryClient.invalidateQueries({
         queryKey: [queryKey.POST, queryKey.GET_POSTS],
       });
+      queryClient.invalidateQueries({
+        queryKey: [queryKey.POST, queryKey.GET_LIKED_POSTS],
+      });
     },
   });
 }
