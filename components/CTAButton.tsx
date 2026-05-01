@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
   Outlined: {
     borderColor: colors.ORANGE_600,
     borderWidth: 2,
+    backgroundColor: colors.WHITE,
   },
   disabledOutlined: {
     borderColor: colors.Grey_300,
@@ -103,7 +104,8 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
   },
   textLarge: {
-    paddingVertical: 11,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     fontSize: 14,
   },
   textFiiled: {
