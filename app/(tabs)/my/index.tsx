@@ -3,9 +3,19 @@ import { colors } from "@/components";
 import AuthRoute from "@/components/AuthRoute";
 import { DefaultRandomAvatar } from "@/components/Avatar";
 import CTAButton from "@/components/CTAButton";
+import FeedItem from "@/components/FeedItem";
+import { FeedListView } from "@/components/FeedList";
 import useAuth from "@/hooks/queries/useAuth";
+import useGetLikedPosts from "@/hooks/useGetLikedPosts";
 import { useRef, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import PagerView from "react-native-pager-view";
 import type { SharedValue } from "react-native-reanimated";
 import Animated, {
@@ -100,10 +110,47 @@ function TabPagerView() {
           <Text>게시물</Text>
         </View>
         <View key="2">
-          <Text>좋아한 게시물</Text>
+          <LikedPosts />
         </View>
       </PagerView>
     </>
+  );
+}
+
+function LikedPosts() {
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    error,
+    refetch,
+  } = useGetLikedPosts();
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const FeedListRef = useRef<FlatList | null>(null);
+
+  if (isError) return <Text>{error.message}</Text>;
+
+  return (
+    <FeedListView
+      posts={data?.pages.flat() || []}
+      listRef={FeedListRef}
+      renderFeedItem={(post) => <FeedItem post={post} />}
+      refreshing={isRefreshing}
+      onEndReached={() => {
+        if (hasNextPage && !isLoading) {
+          fetchNextPage();
+        }
+      }}
+      onRefresh={async () => {
+        setIsRefreshing(true);
+        await refetch().finally(() => {
+          setIsRefreshing(false);
+        });
+      }}
+    />
   );
 }
 
