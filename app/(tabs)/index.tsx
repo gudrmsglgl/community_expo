@@ -1,6 +1,7 @@
 import { colors } from "@/components";
-import FeedList from "@/components/FeedList";
+import { InfinitePosts } from "@/components/FeedList";
 import useAuth from "@/hooks/queries/useAuth";
+import useGetInfinitePosts from "@/hooks/useGetInfinitePosts";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Pressable, StyleSheet } from "react-native";
@@ -24,6 +25,10 @@ export default function HomeScreen() {
       )}
     </SafeAreaView>
   );
+}
+
+function FeedList() {
+  return <InfinitePosts hookFn={useGetInfinitePosts} />;
 }
 
 const styles = StyleSheet.create({
