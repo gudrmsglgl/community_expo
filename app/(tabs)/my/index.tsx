@@ -3,19 +3,12 @@ import { colors } from "@/components";
 import AuthRoute from "@/components/AuthRoute";
 import { DefaultRandomAvatar } from "@/components/Avatar";
 import CTAButton from "@/components/CTAButton";
-import FeedItem from "@/components/FeedItem";
-import { FeedListView } from "@/components/FeedList";
+import { InfinitePosts } from "@/components/FeedList";
 import useAuth from "@/hooks/queries/useAuth";
 import useGetLikedPosts from "@/hooks/useGetLikedPosts";
+import useGetMyPosts from "@/hooks/useGetMyPosts";
 import { useRef, useState } from "react";
-import {
-  FlatList,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import type { SharedValue } from "react-native-reanimated";
 import Animated, {
@@ -28,7 +21,6 @@ export default function MyScreen() {
     auth: { thumbnailUri, nickname, introduce },
   } = useAuth();
   return (
-    // <SafeAreaView style={{ flex: 1 }}>
     <AuthRoute>
       <View style={styles.header}>
         <Thumbnail thumbnailUri={thumbnailUri} />
@@ -42,7 +34,6 @@ export default function MyScreen() {
         <TabPagerView />
       </View>
     </AuthRoute>
-    // </SafeAreaView>
   );
 }
 
@@ -106,52 +97,20 @@ function TabPagerView() {
           }
         }}
       >
-        <View key="1">
-          <Text>게시물</Text>
-        </View>
-        <View key="2">
-          <LikedPosts />
-        </View>
+        <MyFeeds key="1" />
+
+        <LikedPosts key="2" />
       </PagerView>
     </>
   );
 }
 
+function MyFeeds() {
+  return <InfinitePosts hookFn={useGetMyPosts} />;
+}
+
 function LikedPosts() {
-  const {
-    data,
-    isLoading,
-    isError,
-    fetchNextPage,
-    hasNextPage,
-    error,
-    refetch,
-  } = useGetLikedPosts();
-
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const FeedListRef = useRef<FlatList | null>(null);
-
-  if (isError) return <Text>{error.message}</Text>;
-
-  return (
-    <FeedListView
-      posts={data?.pages.flat() || []}
-      listRef={FeedListRef}
-      renderFeedItem={(post) => <FeedItem post={post} />}
-      refreshing={isRefreshing}
-      onEndReached={() => {
-        if (hasNextPage && !isLoading) {
-          fetchNextPage();
-        }
-      }}
-      onRefresh={async () => {
-        setIsRefreshing(true);
-        await refetch().finally(() => {
-          setIsRefreshing(false);
-        });
-      }}
-    />
-  );
+  return <InfinitePosts hookFn={useGetLikedPosts} />;
 }
 
 function TabView({
