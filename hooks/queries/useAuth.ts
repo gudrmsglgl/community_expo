@@ -59,7 +59,7 @@ function useLogin() {
 }
 
 function useGetMe() {
-  const { data, isSuccess, isError } = useQuery({
+  const { data, isSuccess, isError, isLoading } = useQuery({
     queryFn: getMe,
     queryKey: [queryKey.AUTH, queryKey.GET_ME],
   });
@@ -80,11 +80,11 @@ function useGetMe() {
     }
   }, [isError]);
 
-  return { data };
+  return { data, isLoading, isError };
 }
 
 export default function useAuth() {
-  const { data } = useGetMe();
+  const { data, isLoading } = useGetMe();
   const signupMutation = useSignup();
   const loginMutation = useLogin();
 
@@ -101,6 +101,7 @@ export default function useAuth() {
       nickname: data?.nickname,
       introduce: data?.introduce,
     },
+    authLoading: isLoading,
     signupMutation,
     loginMutation,
     logout,

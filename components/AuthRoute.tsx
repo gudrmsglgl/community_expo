@@ -7,12 +7,14 @@ interface AuthRouterProps {
 }
 
 export default function AuthRoute({ children }: AuthRouterProps) {
-  const { auth } = useAuth();
+  const { auth, authLoading } = useAuth();
   const userId = auth.id;
 
   useEffect(() => {
-    !userId && router.replace("/auth");
-  }, [userId]);
+    if (!authLoading && !userId) router.replace("/auth");
+  }, [userId, authLoading]);
 
+  if (authLoading) return null;
+  if (!userId) return null;
   return children;
 }
