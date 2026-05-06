@@ -17,6 +17,11 @@ export async function getMyPosts(page = 1): Promise<Post[]> {
   return data;
 }
 
+export async function getUserPosts(id: number, page = 1): Promise<Post[]> {
+  const { data } = await axiosInstance.get(`/posts/user/${id}?page=${page}`);
+  return data;
+}
+
 export async function deletePost(id: string) {
   const { data } = await axiosInstance.delete(`/posts/${id}`);
   return data;
