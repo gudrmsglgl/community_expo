@@ -84,7 +84,6 @@ export default function PostScreen() {
             currentUserId={Number(userId)}
             from="profile"
             onPressLike={(postId) => {
-              console.log("onPressLike", postId);
               if (shouldGoLogin) {
                 warningToast("로그인 후 이용해주세요.");
                 goLogin();
