@@ -1,3 +1,5 @@
+import useAuth from "@/hooks/queries/useAuth";
+import useAppToast from "@/hooks/useAppToast";
 import useCreateVote from "@/hooks/useCreateVote";
 import { Post, PostVoteOption } from "@/types";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -13,6 +15,10 @@ export function ProfileVoteParticipantBoard({
   post: Post;
   currentUserId: number;
 }) {
+  const {
+    auth: { goLogin, shouldGoLogin },
+  } = useAuth();
+  const { warningToast } = useAppToast();
   const { mutate: createVoteMutation } = useCreateVote();
 
   const [selectedVoteOptionId, setSelectedVoteOptionId] = useState<
@@ -67,6 +73,11 @@ export function ProfileVoteParticipantBoard({
             size="Large"
             disabled={selectedVoteOptionId === null}
             onPress={() => {
+              if (shouldGoLogin) {
+                warningToast("로그인 후 이용해주세요.");
+                goLogin();
+                return;
+              }
               if (selectedVoteOptionId) {
                 createVoteMutation({
                   postId: post.id,

@@ -12,7 +12,7 @@ import useKeyboardVisible from "@/hooks/useKeyboardVisible";
 import useLikePost from "@/hooks/useLikePost";
 import { Comment, PostComment } from "@/types";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { ForwardedRef, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -33,7 +33,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function PostScreen() {
   const {
-    auth: { id: userId },
+    auth: { id: userId, goLogin, shouldGoLogin },
   } = useAuth();
 
   const { warningToast } = useAppToast();
@@ -84,9 +84,10 @@ export default function PostScreen() {
             currentUserId={Number(userId)}
             from="profile"
             onPressLike={(postId) => {
-              if (!userId) {
+              console.log("onPressLike", postId);
+              if (shouldGoLogin) {
                 warningToast("로그인 후 이용해주세요.");
-                router.push("/auth/login");
+                goLogin();
                 return;
               }
               likePostMutation(postId);
@@ -120,6 +121,11 @@ export default function PostScreen() {
               setReplyTargetComment(null);
             }}
             onSubmit={(text) => {
+              if (shouldGoLogin) {
+                warningToast("로그인 후 이용해주세요.");
+                goLogin();
+                return;
+              }
               createCommentMutation(
                 {
                   parentCommentId: replyTargetComment?.id,

@@ -88,6 +88,12 @@ export default function useAuth() {
   const signupMutation = useSignup();
   const loginMutation = useLogin();
 
+  const shouldGoLogin = !data?.id && !isLoading;
+
+  const goLogin = () => {
+    router.push("/auth/login");
+  };
+
   const logout = () => {
     clearAuthorizationHeader();
     deleteAccessToken();
@@ -100,6 +106,8 @@ export default function useAuth() {
       thumbnailUri: data?.imageUri,
       nickname: data?.nickname,
       introduce: data?.introduce,
+      shouldGoLogin,
+      goLogin,
     },
     authLoading: isLoading,
     signupMutation,

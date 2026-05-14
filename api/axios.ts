@@ -1,7 +1,6 @@
 import { clearAuthorizationHeader } from "@/utils/header";
 import { deleteAccessToken, getAccessToken } from "@/utils/secureStore";
 import axios from "axios";
-import { router } from "expo-router";
 import { Platform } from "react-native";
 
 // 실제 기기: PC와 같은 Wi‑Fi, PC의 LAN IP + API 서버 포트(로컬과 동일하게 3030)
@@ -31,7 +30,6 @@ axiosInstance.interceptors.request.use(async (config) => {
   return config;
 });
 
-let isHandling401 = false;
 axiosInstance.interceptors.response.use(
   (res) => res,
   async (err) => {
@@ -46,8 +44,6 @@ axiosInstance.interceptors.response.use(
 
       await deleteAccessToken();
       clearAuthorizationHeader();
-
-      router.push("/auth/login");
     }
     return Promise.reject(err);
   },
