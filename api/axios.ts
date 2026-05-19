@@ -1,4 +1,5 @@
-import { clearAuthorizationHeader } from "@/utils/header";
+import queryClient from "@/api/queryClient";
+import { queryKey } from "@/constants/queryKey";
 import { deleteAccessToken, getAccessToken } from "@/utils/secureStore";
 import axios from "axios";
 import { Platform } from "react-native";
@@ -19,12 +20,18 @@ axiosInstance.interceptors.request.use(async (config) => {
     | string
     | undefined;
 
-  if (!currentAuth) {
+  let bearer = currentAuth;
+
+  if (!bearer) {
     const accessToken = await getAccessToken();
     if (accessToken) {
-      axiosInstance.defaults.headers.common["Authorization"] =
-        `Bearer ${accessToken}`;
+      bearer = `Bearer ${accessToken}`;
+      axiosInstance.defaults.headers.common["Authorization"] = bearer;
     }
+  }
+
+  if (bearer) {
+    config.headers.set("Authorization", bearer);
   }
 
   return config;
@@ -34,16 +41,9 @@ axiosInstance.interceptors.response.use(
   (res) => res,
   async (err) => {
     if (err?.response?.status === 401) {
-      const url = err?.config?.url;
-
-      if (typeof url === "string" && url.includes("/auth/me")) {
-        await deleteAccessToken();
-        clearAuthorizationHeader();
-        return Promise.reject(err);
-      }
-
       await deleteAccessToken();
-      clearAuthorizationHeader();
+      delete axiosInstance.defaults.headers.common["Authorization"];
+      queryClient.setQueryData([queryKey.AUTH, queryKey.GET_ME], null);
     }
     return Promise.reject(err);
   },

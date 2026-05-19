@@ -20,8 +20,13 @@ async function postLogin(body: RequestBody): Promise<{ accessToken: string }> {
   return data;
 }
 
-async function getMe(): Promise<Profile> {
+async function getMe(): Promise<Profile | null> {
   const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    return null;
+  }
+
   const { data } = await axiosInstance.get("/auth/me", {
     headers: {
       Authorization: `Bearer ${accessToken}`,

@@ -31,9 +31,9 @@ function useLogin() {
     onSuccess: async ({ accessToken }) => {
       setAuthorizationHeader(accessToken);
       await saveAccessToken(accessToken);
-      queryClient.fetchQuery({
-        queryKey: [queryKey.AUTH, queryKey.GET_ME],
-      });
+
+      const me = await getMe();
+      queryClient.setQueryData([queryKey.AUTH, queryKey.GET_ME], me);
 
       const state = nav.getState();
       const prevRoute = state?.routes?.[state?.index - 1];
@@ -59,17 +59,23 @@ function useLogin() {
 }
 
 function useGetMe() {
-  const { data, isSuccess, isError, isLoading } = useQuery({
+  const { data, isSuccess, isError, isLoading, refetch } = useQuery({
     queryFn: getMe,
     queryKey: [queryKey.AUTH, queryKey.GET_ME],
   });
 
   useEffect(() => {
     (async () => {
-      if (isSuccess) {
-        const accessToken = await getAccessToken();
+      if (!isSuccess) return;
+
+      const accessToken = await getAccessToken();
+
+      if (accessToken) {
         setAuthorizationHeader(accessToken);
+        return;
       }
+
+      clearAuthorizationHeader();
     })();
   }, [isSuccess]);
 
@@ -80,11 +86,11 @@ function useGetMe() {
     }
   }, [isError]);
 
-  return { data, isLoading, isError };
+  return { data, isLoading, isError, refetch };
 }
 
 export default function useAuth() {
-  const { data, isLoading } = useGetMe();
+  const { data, isLoading, refetch } = useGetMe();
   const signupMutation = useSignup();
   const loginMutation = useLogin();
 
@@ -110,6 +116,7 @@ export default function useAuth() {
       goLogin,
     },
     authLoading: isLoading,
+    refetchAuth: refetch,
     signupMutation,
     loginMutation,
     logout,
