@@ -1,5 +1,6 @@
 import queryClient from "@/api/queryClient";
 import useAuth from "@/hooks/queries/useAuth";
+import { useReactQueryDevTools } from "@dev-plugins/react-query";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
@@ -13,6 +14,7 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
+  useReactQueryDevTools(queryClient);
   return (
     <GestureHandlerRootView>
       <ActionSheetProvider>
@@ -37,6 +39,7 @@ function RootNavigator() {
       <Stack.Screen name="auth" options={{ headerShown: false }} />
       <Stack.Screen name="post" options={{ headerShown: false }} />
       <Stack.Screen name="image" options={{ headerShown: false }} />
+      <Stack.Screen name="profile" options={{ headerShown: false }} />
     </Stack>
   );
 }

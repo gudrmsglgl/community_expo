@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.29.0",
+    "@dev-plugins/react-query": "^0.4.0",
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^15.0.3",
     "@gorhom/bottom-sheet": "^5.2.8",
