@@ -8,20 +8,22 @@ import { AVATAR_SIZE } from "./Avatar";
 import { colors } from "./index";
 
 interface ProfileProps {
-  onPress: () => void;
   imageUri?: string;
   nickname: string;
   createdAt: string;
   defaultUserAvatar?: React.ComponentType<NiceAvatarProps | SvgProps>;
+  onPress: () => void;
+  onPressThumbnail: () => void;
   option?: React.ReactNode;
 }
 
 export default function Profile({
-  onPress,
   imageUri,
   nickname,
   createdAt,
   defaultUserAvatar,
+  onPress,
+  onPressThumbnail,
   option,
 }: ProfileProps) {
   const config = genConfig({
@@ -40,11 +42,13 @@ export default function Profile({
   return (
     <View style={styles.container}>
       <Pressable onPress={onPress} style={styles.profileContainer}>
-        {imageUri ? (
-          <Image source={{ uri: imageUri }} style={styles.image} />
-        ) : (
-          renderDefaultAvatar()
-        )}
+        <Pressable onPress={onPressThumbnail}>
+          {imageUri ? (
+            <Image source={{ uri: imageUri }} style={styles.image} />
+          ) : (
+            renderDefaultAvatar()
+          )}
+        </Pressable>
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{nickname}</Text>
           <Text style={styles.time}>{createdAt}</Text>

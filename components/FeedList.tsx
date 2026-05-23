@@ -1,5 +1,9 @@
 import { Post } from "@/types";
-import { InfiniteData, UseInfiniteQueryResult } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  UseInfiniteQueryResult,
+  UseSuspenseInfiniteQueryResult,
+} from "@tanstack/react-query";
 import { ReactElement, RefObject, useRef, useState } from "react";
 import { FlatList, StyleSheet, Text } from "react-native";
 import { colors } from ".";
@@ -14,11 +18,14 @@ type FeedListViewProps = {
   renderFeedItem: (post: Post) => ReactElement;
 };
 
-export function InfinitePosts({
-  hookFn,
-}: {
-  hookFn: () => UseInfiniteQueryResult<InfiniteData<Post[], unknown>, Error>;
-}) {
+type InfiniteHookFn =
+  | (() => UseInfiniteQueryResult<InfiniteData<Post[], unknown>, Error>)
+  | (() => UseSuspenseInfiniteQueryResult<
+      InfiniteData<Post[], unknown>,
+      Error
+    >);
+
+export function InfinitePosts({ hookFn }: { hookFn: InfiniteHookFn }) {
   const {
     data,
     isLoading,

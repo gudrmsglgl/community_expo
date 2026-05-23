@@ -1,9 +1,9 @@
 import { getUserPosts } from "@/api/post";
 import { queryKey } from "@/constants/queryKey";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 
 export default function useGetUserPosts(id: number) {
-  return useInfiniteQuery({
+  return useSuspenseInfiniteQuery({
     queryFn: ({ pageParam }) => getUserPosts(id, pageParam),
     queryKey: [queryKey.POST, queryKey.GET_USER_POSTS, id],
     initialPageParam: 1,

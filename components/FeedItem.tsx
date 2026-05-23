@@ -125,6 +125,13 @@ export function FeedItemView({
       <View style={styles.profileContainer}>
         <Profile
           onPress={onPress}
+          onPressThumbnail={() => {
+            if (currentUserId === post.author.id) {
+              router.push("/my");
+              return;
+            }
+            router.push(`/profile/${post.author.id}`);
+          }}
           imageUri={post.author.imageUri}
           nickname={post.author.nickname}
           createdAt={dayjs(post.createdAt).fromNow()}
