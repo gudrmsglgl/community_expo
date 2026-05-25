@@ -4,7 +4,7 @@ const nickNameSchema = z.string();
 const introduceSchema = z.string();
 
 export const updateProfileSchema = z.object({
-  nickName: nickNameSchema,
+  nickname: nickNameSchema,
   introduce: introduceSchema,
 });
 

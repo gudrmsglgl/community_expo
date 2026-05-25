@@ -40,4 +40,11 @@ async function getUserProfile(id: number): Promise<Profile> {
   return data;
 }
 
-export { getMe, getUserProfile, postLogin, postSignup };
+async function editProfile(
+  profile: Pick<Profile, "nickname" | "introduce">,
+): Promise<Profile> {
+  const { data } = await axiosInstance.patch("/auth/me", profile);
+  return data;
+}
+
+export { editProfile, getMe, getUserProfile, postLogin, postSignup };

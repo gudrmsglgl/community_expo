@@ -3,11 +3,14 @@ import { DefaultRandomAvatar } from "@/components/Avatar";
 import CTAButton from "@/components/CTAButton";
 import RHFInputField from "@/components/form/RHFInputField";
 import useAuth from "@/hooks/queries/useAuth";
+import useAppToast from "@/hooks/useAppToast";
+import useEditProfile from "@/hooks/useEditProfile";
 import {
   updateProfileSchema,
   UpdateProfileSchema,
 } from "@/schemas/updateProfileSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { router } from "expo-router";
 import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
@@ -21,12 +24,50 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProfileUpdateScreen() {
+  const { successToast } = useAppToast();
+
+  const {
+    auth: { nickname, introduce },
+  } = useAuth();
+
+  const { mutate: editProfileMutation } = useEditProfile();
+
+  const updateForm = useForm<UpdateProfileSchema>({
+    resolver: zodResolver(updateProfileSchema),
+    defaultValues: {
+      nickname: "",
+      introduce: "",
+    },
+  });
+
+  const onSubmitSave = (form: UpdateProfileSchema) => {
+    editProfileMutation(form, {
+      onSuccess: () => {
+        successToast("프로필 변경 완료");
+        router.back();
+      },
+    });
+  };
+
+  useEffect(() => {
+    updateForm.reset({
+      nickname: nickname,
+      introduce: introduce,
+    });
+  }, [nickname, introduce]);
+
   return (
-    <View style={styles.container}>
-      <Header onPressUpdateAvatar={() => {}} />
-      <UpdateForm />
-      <Footer onSave={() => {}} />
-    </View>
+    <FormProvider {...updateForm}>
+      <View style={styles.container}>
+        <Header onPressUpdateAvatar={() => {}} />
+        <UpdateForm />
+        <Footer
+          onSave={() => {
+            updateForm.handleSubmit(onSubmitSave)();
+          }}
+        />
+      </View>
+    </FormProvider>
   );
 }
 
@@ -47,40 +88,19 @@ function Header({ onPressUpdateAvatar }: { onPressUpdateAvatar: () => void }) {
 }
 
 function UpdateForm() {
-  const {
-    auth: { id, nickname, introduce },
-  } = useAuth();
-
-  const updateForm = useForm<UpdateProfileSchema>({
-    resolver: zodResolver(updateProfileSchema),
-    defaultValues: {
-      nickName: "",
-      introduce: "",
-    },
-  });
-
-  useEffect(() => {
-    updateForm.reset({
-      nickName: nickname,
-      introduce: introduce,
-    });
-  }, [nickname, introduce]);
-
   return (
-    <FormProvider {...updateForm}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <KeyboardAwareScrollView
-          bottomOffset={50}
-          extraKeyboardSpace={16}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.formContainer}>
-            <RHFInputField name="nickName" label="닉네임" />
-            <RHFInputField name="introduce" label="소개" />
-          </View>
-        </KeyboardAwareScrollView>
-      </TouchableWithoutFeedback>
-    </FormProvider>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAwareScrollView
+        bottomOffset={50}
+        extraKeyboardSpace={16}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.formContainer}>
+          <RHFInputField name="nickname" label="닉네임" />
+          <RHFInputField name="introduce" label="소개" />
+        </View>
+      </KeyboardAwareScrollView>
+    </TouchableWithoutFeedback>
   );
 }
 
