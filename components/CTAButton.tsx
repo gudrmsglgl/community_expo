@@ -45,6 +45,7 @@ export default function CTAButton({
           disabled && variant === "Outlined" && styles.disabledText,
           disabled && variant === "Standard" && styles.disabledText,
           size === "Large" ? styles.textLarge : styles.textSmall,
+          size === "Medium" ? styles.textMedium : styles.textSmall,
         ]}
         numberOfLines={1}
         ellipsizeMode={"tail"}
@@ -82,10 +83,6 @@ const styles = StyleSheet.create({
   Large: {
     width: "100%",
   },
-  Medium: {
-    width: 50,
-    height: 38,
-  },
   Small: {
     minWidth: 40,
     maxWidth: 60,
@@ -99,6 +96,11 @@ const styles = StyleSheet.create({
   },
   textSmall: {
     fontSize: 12,
+  },
+  textMedium: {
+    fontSize: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
   },
   textEllipsize: {
     maxWidth: "100%",

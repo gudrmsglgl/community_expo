@@ -1,5 +1,4 @@
 import { BASE_URL } from "@/api/axios";
-import queryClient from "@/api/queryClient";
 import { colors } from "@/components";
 import { DefaultRandomAvatar } from "@/components/Avatar";
 import FeedItemSkleton from "@/components/FeedItemSkleton";
@@ -71,17 +70,6 @@ function ProfileErrorFallback({ onRetry }: { onRetry: () => void }) {
 
 function ProfileContents({ id }: { id: number }) {
   const { data } = useGetUserProfile(Number(id));
-
-  useEffect(() => {
-    const query = queryClient.getQueryCache().find({
-      queryKey: ["auth", "getUserProfile", id],
-    });
-
-    console.log(
-      "ProfileContents profile observers",
-      query?.getObserversCount(),
-    );
-  }, [data]);
 
   return (
     <>

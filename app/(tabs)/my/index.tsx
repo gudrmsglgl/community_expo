@@ -7,6 +7,7 @@ import { InfinitePosts } from "@/components/FeedList";
 import useAuth from "@/hooks/queries/useAuth";
 import useGetLikedPosts from "@/hooks/useGetLikedPosts";
 import useGetMyPosts from "@/hooks/useGetMyPosts";
+import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -25,7 +26,12 @@ export default function MyScreen() {
       <View style={styles.header}>
         <Thumbnail thumbnailUri={thumbnailUri} />
         <View style={styles.profileEditTopButton}>
-          <CTAButton variant={"Outlined"} title="프로필 편집" size={"Large"} />
+          <CTAButton
+            variant={"Outlined"}
+            title="프로필 편집"
+            size={"Large"}
+            onPress={() => router.push("/profile/update")}
+          />
         </View>
       </View>
 
