@@ -1,4 +1,4 @@
-import { getMe, postLogin, postSignup } from "@/api/auth";
+import { editProfile, getMe, postLogin, postSignup } from "@/api/auth";
 import queryClient from "@/api/queryClient";
 import { queryKey } from "@/constants/queryKey";
 import {
@@ -89,10 +89,32 @@ function useGetMe() {
   return { data, isLoading, isError, refetch };
 }
 
+function useEditProfile() {
+  return useMutation({
+    mutationFn: editProfile,
+    onSuccess: (updatedProfile) => {
+      queryClient.setQueryData(
+        [queryKey.AUTH, queryKey.GET_ME],
+        updatedProfile,
+      );
+      queryClient.invalidateQueries({
+        queryKey: [queryKey.POST, queryKey.GET_MY_POSTS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [queryKey.POST, queryKey.GET_POSTS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [queryKey.POST, queryKey.GET_LIKED_POSTS],
+      });
+    },
+  });
+}
+
 export default function useAuth() {
   const { data, isLoading, refetch } = useGetMe();
   const signupMutation = useSignup();
   const loginMutation = useLogin();
+  const profileUpdateMutation = useEditProfile();
 
   const shouldGoLogin = !data?.id && !isLoading;
 
@@ -119,6 +141,7 @@ export default function useAuth() {
     refetchAuth: refetch,
     signupMutation,
     loginMutation,
+    profileUpdateMutation,
     logout,
   };
 }

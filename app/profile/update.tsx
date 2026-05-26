@@ -4,7 +4,6 @@ import CTAButton from "@/components/CTAButton";
 import RHFInputField from "@/components/form/RHFInputField";
 import useAuth from "@/hooks/queries/useAuth";
 import useAppToast from "@/hooks/useAppToast";
-import useEditProfile from "@/hooks/useEditProfile";
 import {
   updateProfileSchema,
   UpdateProfileSchema,
@@ -28,9 +27,8 @@ export default function ProfileUpdateScreen() {
 
   const {
     auth: { nickname, introduce },
+    profileUpdateMutation,
   } = useAuth();
-
-  const { mutate: editProfileMutation } = useEditProfile();
 
   const updateForm = useForm<UpdateProfileSchema>({
     resolver: zodResolver(updateProfileSchema),
@@ -38,12 +36,13 @@ export default function ProfileUpdateScreen() {
       nickname: "",
       introduce: "",
     },
+    mode: "onChange",
   });
 
   const onSubmitSave = (form: UpdateProfileSchema) => {
-    editProfileMutation(form, {
+    profileUpdateMutation.mutate(form, {
       onSuccess: () => {
-        successToast("프로필 변경 완료");
+        successToast("프로필 변경 완료되었습니다.");
         router.back();
       },
     });
@@ -96,7 +95,11 @@ function UpdateForm() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.formContainer}>
-          <RHFInputField name="nickname" label="닉네임" />
+          <RHFInputField
+            name="nickname"
+            label="닉네임"
+            nextFieldName="introduce"
+          />
           <RHFInputField name="introduce" label="소개" />
         </View>
       </KeyboardAwareScrollView>
