@@ -8,4 +8,5 @@ export const queryKey = {
   GET_USER_POSTS: "getUserPosts",
   GET_POST: "getPost",
   GET_LIKED_POSTS: "getLikedPosts",
+  AVATAR: "avatar",
 };

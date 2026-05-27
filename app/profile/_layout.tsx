@@ -31,6 +31,20 @@ export default function ProfileLayout() {
           headerShadowVisible: true,
         }}
       />
+      <Stack.Screen
+        name="avatar"
+        options={{
+          title: "",
+          headerTitle: "",
+          headerShown: true,
+          headerShadowVisible: false,
+          headerLeft: () => (
+            <Pressable onPress={() => router.back()}>
+              <Ionicons name="chevron-back" size={24} color="black" />
+            </Pressable>
+          ),
+        }}
+      />
     </Stack>
   );
 }

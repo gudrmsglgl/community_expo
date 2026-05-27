@@ -58,7 +58,11 @@ export default function ProfileUpdateScreen() {
   return (
     <FormProvider {...updateForm}>
       <View style={styles.container}>
-        <Header onPressUpdateAvatar={() => {}} />
+        <Header
+          onPressUpdateAvatar={() => {
+            router.push("/profile/avatar");
+          }}
+        />
         <UpdateForm />
         <Footer
           onSave={() => {
