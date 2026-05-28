@@ -106,6 +106,9 @@ function useEditProfile() {
       queryClient.invalidateQueries({
         queryKey: [queryKey.POST, queryKey.GET_LIKED_POSTS],
       });
+      queryClient.invalidateQueries({
+        queryKey: [queryKey.POST, queryKey.GET_POST],
+      });
     },
   });
 }
@@ -134,6 +137,12 @@ export default function useAuth() {
       thumbnailUri: data?.imageUri,
       nickname: data?.nickname,
       introduce: data?.introduce,
+      hatId: data?.hatId || "",
+      handId: data?.handId || "",
+      faceId: data?.faceId || "",
+      skinId: data?.skinId || "",
+      bottomId: data?.bottomId || "",
+      topId: data?.topId || "",
       shouldGoLogin,
       goLogin,
     },

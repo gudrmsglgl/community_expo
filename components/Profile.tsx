@@ -1,3 +1,4 @@
+import { BASE_URL } from "@/api/axios";
 import Avatar, {
   genConfig,
   NiceAvatarProps,
@@ -44,7 +45,10 @@ export default function Profile({
       <Pressable onPress={onPress} style={styles.profileContainer}>
         <Pressable onPress={onPressThumbnail}>
           {imageUri ? (
-            <Image source={{ uri: imageUri }} style={styles.image} />
+            <Image
+              source={{ uri: `${BASE_URL}/${imageUri}` }}
+              style={styles.image}
+            />
           ) : (
             renderDefaultAvatar()
           )}
@@ -73,6 +77,8 @@ const styles = StyleSheet.create({
   image: {
     borderRadius: 50,
     borderWidth: StyleSheet.hairlineWidth,
+    width: 50,
+    height: 50,
   },
   infoContainer: {
     flexDirection: "column",

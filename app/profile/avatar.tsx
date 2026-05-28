@@ -2,9 +2,11 @@ import { BASE_URL } from "@/api/axios";
 import { colors } from "@/components";
 import CTAButton from "@/components/CTAButton";
 import TabPagerView from "@/components/TabPagerView";
+import useAuth from "@/hooks/queries/useAuth";
+import useAppToast from "@/hooks/useAppToast";
 import useGetAvatarItems from "@/hooks/useGetAvatarItems";
-import { useNavigation } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useNavigation } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -15,32 +17,39 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-type AvatarItemKey = "hats" | "skins" | "tops" | "bottoms" | "hands" | "faces";
-
-type AvatarTabItem = {
-  key: AvatarItemKey;
-  title: string;
-};
-
-const AVATAR_TABS: AvatarTabItem[] = [
-  { key: "hats", title: "모자" },
-  { key: "skins", title: "피부" },
-  { key: "tops", title: "상의" },
-  { key: "bottoms", title: "하의" },
-  { key: "hands", title: "손" },
-  { key: "faces", title: "얼굴" },
+const AVATAR_ITEMS = [
+  { key: "hats", title: "모자", apiKey: "hatId" },
+  { key: "skins", title: "피부", apiKey: "skinId" },
+  { key: "tops", title: "상의", apiKey: "topId" },
+  { key: "bottoms", title: "하의", apiKey: "bottomId" },
+  { key: "hands", title: "손", apiKey: "handId" },
+  { key: "faces", title: "얼굴", apiKey: "faceId" },
 ] as const;
+
+type AvatarItemApiKey = (typeof AVATAR_ITEMS)[number]["apiKey"];
+
+type UserSelectedAvatarItems = Partial<Record<AvatarItemApiKey, string>>;
 
 export default function AvatarScreen() {
   const navigation = useNavigation();
+  const { successToast } = useAppToast();
+
+  const { auth, authLoading, profileUpdateMutation } = useAuth();
 
   const avatarQuries = useGetAvatarItems();
-  const [selectedItem, setSelectedItem] = useState([
-    {
-      key: "",
-      item: "",
-    },
-  ]);
+  const { userSelectedAvatarItems, selectAvatarItem } = useAvatarSelection({
+    auth,
+    authLoading,
+  });
+
+  const onSubmitAvatarItems = () => {
+    profileUpdateMutation.mutate(userSelectedAvatarItems, {
+      onSuccess: () => {
+        successToast("프로필 저장 완료됐습니다.");
+        router.back();
+      },
+    });
+  };
 
   useEffect(() => {
     navigation.setOptions({
@@ -50,12 +59,12 @@ export default function AvatarScreen() {
     });
   }, [navigation]);
 
-  const tabs = AVATAR_TABS.map((item) => item.title);
+  const tabs = AVATAR_ITEMS.map((item) => item.title);
 
   return (
     <View style={{ flex: 1 }}>
       <TabPagerView tabs={tabs}>
-        {AVATAR_TABS.map((tab) => (
+        {AVATAR_ITEMS.map((tab) => (
           <View key={tab.key} style={styles.page}>
             <FlatList
               data={avatarQuries[tab.key]}
@@ -65,12 +74,11 @@ export default function AvatarScreen() {
               renderItem={({ item }) => (
                 <AvatarItem
                   imageUri={item}
-                  isSelected={selectedItem[tab.key] === item}
+                  isSelected={
+                    userSelectedAvatarItems[tab.apiKey] === getImageId(item)
+                  }
                   onClick={() => {
-                    setSelectedItem((prev) => ({
-                      ...prev,
-                      [tab.key]: item,
-                    }));
+                    selectAvatarItem(tab.apiKey, item);
                   }}
                 />
               )}
@@ -78,7 +86,7 @@ export default function AvatarScreen() {
           </View>
         ))}
       </TabPagerView>
-      <FooterSaveButton />
+      <FooterSaveButton onPress={onSubmitAvatarItems} />
     </View>
   );
 }
@@ -103,13 +111,72 @@ function AvatarItem({
   );
 }
 
-function FooterSaveButton() {
+function FooterSaveButton({ onPress }: { onPress: () => void }) {
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.footerButton, { marginBottom: insets.bottom }]}>
-      <CTAButton title="저장하기" variant="Filled" size="Large" />
+      <CTAButton
+        title="저장하기"
+        variant="Filled"
+        size="Large"
+        onPress={onPress}
+      />
     </View>
   );
+}
+
+function useAvatarSelection({
+  auth,
+  authLoading,
+}: {
+  auth: ReturnType<typeof useAuth>["auth"];
+  authLoading: boolean;
+}) {
+  const [userSelectedAvatarItems, setUserSelectedAvatarItems] =
+    useState<UserSelectedAvatarItems>({});
+  const isInitialSelectedItem = useRef(false);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (isInitialSelectedItem.current) return;
+
+    setUserSelectedAvatarItems({
+      hatId: auth.hatId,
+      faceId: auth.faceId,
+      topId: auth.topId,
+      handId: auth.handId,
+      bottomId: auth.bottomId,
+      skinId: auth.skinId,
+    });
+
+    isInitialSelectedItem.current = true;
+  }, [
+    auth.bottomId,
+    auth.faceId,
+    auth.handId,
+    auth.hatId,
+    auth.skinId,
+    auth.topId,
+    authLoading,
+  ]);
+
+  const selectAvatarItem = (apiKey: AvatarItemApiKey, imageUri: string) => {
+    setUserSelectedAvatarItems((prev) => ({
+      ...prev,
+      [apiKey]: getImageId(imageUri),
+    }));
+  };
+
+  return {
+    userSelectedAvatarItems,
+    selectAvatarItem,
+  };
+}
+
+function getImageId(serverUrl: string) {
+  const fileName = serverUrl.split("/").pop() ?? "";
+  const [id] = fileName.split(".");
+  return id;
 }
 
 const styles = StyleSheet.create({

@@ -26,7 +26,7 @@ export default function ProfileUpdateScreen() {
   const { successToast } = useAppToast();
 
   const {
-    auth: { nickname, introduce },
+    auth: { nickname, introduce, thumbnailUri },
     profileUpdateMutation,
   } = useAuth();
 
@@ -59,6 +59,7 @@ export default function ProfileUpdateScreen() {
     <FormProvider {...updateForm}>
       <View style={styles.container}>
         <Header
+          thumbnailUri={thumbnailUri}
           onPressUpdateAvatar={() => {
             router.push("/profile/avatar");
           }}
@@ -74,10 +75,16 @@ export default function ProfileUpdateScreen() {
   );
 }
 
-function Header({ onPressUpdateAvatar }: { onPressUpdateAvatar: () => void }) {
+function Header({
+  thumbnailUri,
+  onPressUpdateAvatar,
+}: {
+  thumbnailUri: string;
+  onPressUpdateAvatar: () => void;
+}) {
   return (
     <View style={styles.headerContainer}>
-      <Thumbnail />
+      <Thumbnail thumbnailUri={thumbnailUri} />
       <View style={styles.avatarUpdateButton}>
         <CTAButton
           variant="Outlined"

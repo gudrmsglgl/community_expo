@@ -40,9 +40,7 @@ async function getUserProfile(id: number): Promise<Profile> {
   return data;
 }
 
-async function editProfile(
-  profile: Pick<Profile, "nickname" | "introduce">,
-): Promise<Profile> {
+async function editProfile(profile: Partial<Profile>): Promise<Profile> {
   const { data } = await axiosInstance.patch("/auth/me", profile);
   return data;
 }
