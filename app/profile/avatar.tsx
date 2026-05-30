@@ -16,14 +16,15 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SvgUri } from "react-native-svg";
 
 const AVATAR_ITEMS = [
-  { key: "hats", title: "모자", apiKey: "hatId" },
-  { key: "skins", title: "피부", apiKey: "skinId" },
-  { key: "tops", title: "상의", apiKey: "topId" },
-  { key: "bottoms", title: "하의", apiKey: "bottomId" },
-  { key: "hands", title: "손", apiKey: "handId" },
-  { key: "faces", title: "얼굴", apiKey: "faceId" },
+  { key: "hats", title: "모자", apiKey: "hatId", zIndex: 70 },
+  { key: "faces", title: "얼굴", apiKey: "faceId", zIndex: 60 },
+  { key: "tops", title: "상의", apiKey: "topId", zIndex: 50 },
+  { key: "bottoms", title: "하의", apiKey: "bottomId", zIndex: 40 },
+  { key: "skins", title: "피부", apiKey: "skinId", zIndex: 20 },
+  { key: "hands", title: "손", apiKey: "handId", zIndex: 10 },
 ] as const;
 
 type AvatarItemApiKey = (typeof AVATAR_ITEMS)[number]["apiKey"];
@@ -62,7 +63,10 @@ export default function AvatarScreen() {
   const tabs = AVATAR_ITEMS.map((item) => item.title);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: colors.WHITE }}>
+      <HeaderBackGround>
+        <PreviewAvatar userSelectedAvatarItems={userSelectedAvatarItems} />
+      </HeaderBackGround>
       <TabPagerView tabs={tabs}>
         {AVATAR_ITEMS.map((tab) => (
           <View key={tab.key} style={styles.page}>
@@ -87,6 +91,37 @@ export default function AvatarScreen() {
         ))}
       </TabPagerView>
       <FooterSaveButton onPress={onSubmitAvatarItems} />
+    </View>
+  );
+}
+
+function HeaderBackGround({ children }: { children: React.ReactNode }) {
+  return <View style={styles.header}>{children}</View>;
+}
+
+function PreviewAvatar({
+  userSelectedAvatarItems,
+}: {
+  userSelectedAvatarItems: UserSelectedAvatarItems;
+}) {
+  return (
+    <View style={styles.thumbnailAvatarContainer}>
+      {AVATAR_ITEMS.map((item) => {
+        const avatarItemId = userSelectedAvatarItems[item.apiKey];
+        return (
+          avatarItemId && (
+            <SvgUri
+              uri={getAvatarImageUri(item.key, avatarItemId)}
+              style={[styles.thumbnailAvatar, { zIndex: item.zIndex }]}
+              key={item.key}
+            />
+          )
+        );
+      })}
+      <SvgUri
+        uri={getAvatarImageUri("default")}
+        style={[styles.thumbnailAvatar, { zIndex: 30 }]}
+      />
     </View>
   );
 }
@@ -173,6 +208,14 @@ function useAvatarSelection({
   };
 }
 
+function getAvatarImageUri(category: string, id?: string) {
+  if (category == "default" || !Boolean(id)) {
+    return `${BASE_URL}/default/frame.svg`;
+  }
+
+  return `${BASE_URL}/items/${category}/${id}.svg`;
+}
+
 function getImageId(serverUrl: string) {
   const fileName = serverUrl.split("/").pop() ?? "";
   const [id] = fileName.split(".");
@@ -180,6 +223,27 @@ function getImageId(serverUrl: string) {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    width: "100%",
+    height: 114,
+    backgroundColor: colors.ORANGE_200,
+    alignItems: "center",
+    marginBottom: 119,
+  },
+  thumbnailAvatarContainer: {
+    width: 229,
+    height: 229,
+    borderRadius: 229,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: colors.Grey_200,
+    backgroundColor: colors.WHITE,
+  },
+  thumbnailAvatar: {
+    width: 229,
+    height: 229,
+    position: "absolute",
+  },
   page: {
     flex: 1,
     marginBottom: 50,
