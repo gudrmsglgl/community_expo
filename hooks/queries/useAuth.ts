@@ -128,7 +128,7 @@ export default function useAuth() {
   const logout = () => {
     clearAuthorizationHeader();
     deleteAccessToken();
-    queryClient.resetQueries({ queryKey: [queryKey.AUTH] });
+    queryClient.clear();
   };
 
   return {
