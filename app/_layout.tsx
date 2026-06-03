@@ -1,9 +1,12 @@
 import queryClient from "@/api/queryClient";
 import useAuth from "@/hooks/queries/useAuth";
+import useNotificationObserver from "@/hooks/useNotificationObserver";
 import { useReactQueryDevTools } from "@dev-plugins/react-query";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
+import * as Notifications from "expo-notifications";
 import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
@@ -13,13 +16,25 @@ export const unstable_settings = {
   anchor: "(tabs)",
 };
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
 export default function RootLayout() {
   useReactQueryDevTools(queryClient);
+  useNotificationObserver();
+
   return (
     <GestureHandlerRootView>
       <ActionSheetProvider>
         <QueryClientProvider client={queryClient}>
           <KeyboardProvider>
+            <StatusBar style="dark" />
             <RootNavigator />
           </KeyboardProvider>
         </QueryClientProvider>

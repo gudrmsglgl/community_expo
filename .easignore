@@ -45,5 +45,4 @@ app-example
 *storybook.log
 storybook-static
 
-google-services.json
-*firebase-adminsdk-*.json
+*.firebase-adminsdk-*.json

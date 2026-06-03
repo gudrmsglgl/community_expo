@@ -3,6 +3,7 @@ import FixedButton from "@/components/FixedButton";
 import RHFInputField from "@/components/form/RHFInputField";
 import useAuth from "@/hooks/queries/useAuth";
 import useKeyboardFocusCleanup from "@/hooks/useKeyboardFocusCleanup";
+import usePushNotification from "@/hooks/usePushNotification";
 import { loginSchema, LoginSchema } from "@/schemas/loginSchemas";
 import { ApiErrorResponse } from "@/types/api";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +22,9 @@ import {
 } from "react-native";
 
 export default function LoginScreen() {
+  const { expoPushToken } = usePushNotification();
+  console.log("expoPushToken", expoPushToken);
+
   const { loginMutation } = useAuth();
   const loginForm = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -41,6 +45,7 @@ export default function LoginScreen() {
       {
         email,
         password,
+        expoPushToken,
       },
       {
         onError: (error) => {
