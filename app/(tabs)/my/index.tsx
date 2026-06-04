@@ -1,6 +1,5 @@
 import { BASE_URL } from "@/api/axios";
 import { colors } from "@/components";
-import AuthRoute from "@/components/AuthRoute";
 import { DefaultRandomAvatar } from "@/components/Avatar";
 import CTAButton from "@/components/CTAButton";
 import { InfinitePosts } from "@/components/FeedList";
@@ -16,7 +15,7 @@ export default function MyScreen() {
     auth: { thumbnailUri, nickname, introduce },
   } = useAuth();
   return (
-    <AuthRoute>
+    <>
       <View style={styles.header}>
         <Thumbnail thumbnailUri={thumbnailUri} />
         <View style={styles.profileEditTopButton}>
@@ -36,7 +35,7 @@ export default function MyScreen() {
           <LikedPosts key="2" />
         </TabPagerView>
       </View>
-    </AuthRoute>
+    </>
   );
 }
 
