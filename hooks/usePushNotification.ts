@@ -4,7 +4,13 @@ import { Platform } from "react-native";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 
-function usePushNotification() {
+type UsePushNotificationOptions = {
+  enabled?: boolean;
+};
+
+function usePushNotification({
+  enabled = true,
+}: UsePushNotificationOptions = {}) {
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState<
     Notifications.Notification | undefined
@@ -16,6 +22,8 @@ function usePushNotification() {
   };
 
   const registerForPushNotificationsAsync = async () => {
+    if (!enabled) return;
+
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("default", {
         name: "default",
@@ -55,6 +63,12 @@ function usePushNotification() {
   };
 
   useEffect(() => {
+    if (!enabled) {
+      setExpoPushToken("");
+      setNotification(undefined);
+      return;
+    }
+
     registerForPushNotificationsAsync()
       .then((token) => setExpoPushToken(token ?? ""))
       .catch((error: any) => console.log("error", error));
@@ -74,7 +88,7 @@ function usePushNotification() {
       notificationListener.remove();
       responseListener.remove();
     };
-  }, []);
+  }, [enabled]);
 
   return { expoPushToken, notification };
 }

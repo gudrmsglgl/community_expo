@@ -22,8 +22,10 @@ import {
 } from "react-native";
 
 export default function LoginScreen() {
-  const { expoPushToken } = usePushNotification();
-  console.log("expoPushToken", expoPushToken);
+  const { expoPushToken } = usePushNotification({
+    enabled: Platform.OS === "android",
+  });
+  console.log("LoginScreen expoPushToken:", expoPushToken);
 
   const { loginMutation } = useAuth();
   const loginForm = useForm<LoginSchema>({
