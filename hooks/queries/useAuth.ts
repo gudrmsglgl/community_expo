@@ -11,20 +11,33 @@ import {
   saveAccessToken,
 } from "@/utils/secureStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { router, useNavigation } from "expo-router";
 import { useEffect } from "react";
+import useAppToast from "../useAppToast";
+
+function getErrorMessage(e: AxiosError) {
+  const networkErrorMsg = "네트워크 및 WIFI 연결이 불안정 합니다.";
+  return e.code === "ERR_NETWORK" ? networkErrorMsg : e.message;
+}
 
 function useSignup() {
+  const { errorToast } = useAppToast();
+
   return useMutation({
     mutationFn: postSignup,
     onSuccess: () => {
       router.replace("/auth/login");
+    },
+    onError: (e: AxiosError) => {
+      errorToast(getErrorMessage(e));
     },
   });
 }
 
 function useLogin() {
   const nav = useNavigation();
+  const { errorToast } = useAppToast();
 
   return useMutation({
     mutationFn: postLogin,
@@ -52,8 +65,8 @@ function useLogin() {
 
       router.replace("/");
     },
-    onError: (error) => {
-      console.log("error", error);
+    onError: (error: AxiosError) => {
+      errorToast(getErrorMessage(error));
     },
   });
 }

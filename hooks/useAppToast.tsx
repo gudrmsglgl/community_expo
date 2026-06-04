@@ -19,8 +19,15 @@ export default function useAppToast() {
     });
   }
 
+  function errorToast(message: string): void {
+    toast.error(message, {
+      position: "top-center",
+    });
+  }
+
   return {
     successToast,
     warningToast,
+    errorToast,
   };
 }
