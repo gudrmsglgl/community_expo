@@ -1,0 +1,21 @@
+const ko = {
+  tabs: {
+    home: "홈",
+    profile: "내 프로필",
+    settings: "설정",
+  },
+  common: {
+    cancel: "취소",
+  },
+  auth: {
+    logout: "로그아웃",
+  },
+  settings: {
+    language: "언어설정",
+  },
+  login: {
+    welcomeMessage: "{{nickname}}님, 커뮤니티에 오신 걸 환영합니다 ❤️",
+  },
+};
+
+export default ko;

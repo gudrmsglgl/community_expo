@@ -5,7 +5,7 @@ async function saveSecureStore(key: string, value: string) {
 }
 
 export async function saveAccessToken(accessToken: string) {
-  await saveSecureStore("accessToken", accessToken);
+  return saveSecureStore("accessToken", accessToken);
 }
 
 export async function getAccessToken() {
@@ -15,4 +15,13 @@ export async function getAccessToken() {
 
 export async function deleteAccessToken() {
   await SecureStore.deleteItemAsync("accessToken");
+}
+
+export async function saveDeviceLanguage(language: string) {
+  return saveSecureStore("language", language);
+}
+
+export async function getSavedDeviceLanguage() {
+  const language = await SecureStore.getItemAsync("language");
+  return language;
 }
