@@ -1,0 +1,49 @@
+name: Sync i18n from Google Sheet
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Runs at 09:10 Asia/Seoul. GitHub schedules use UTC.
+    - cron: "10 0 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-i18n:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync i18n files
+        run: npm run sync:i18n
+        env:
+          I18N_SHEET_CSV_URL: ${{ secrets.I18N_SHEET_CSV_URL }}
+          I18N_GOOGLE_SHEET_ID: ${{ secrets.I18N_GOOGLE_SHEET_ID }}
+          I18N_GOOGLE_SHEET_GID: ${{ secrets.I18N_GOOGLE_SHEET_GID }}
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: chore/sync-i18n
+          delete-branch: true
+          commit-message: "chore: sync i18n translations"
+          title: "chore: sync i18n translations"
+          body: |
+            Google Sheet의 번역 데이터를 기준으로 `i18n/locales` 파일을 갱신했습니다.
+
+            이 PR은 매일 오전 9시 10분(Asia/Seoul)에 자동으로 생성/업데이트됩니다.
+          add-paths: |
+            i18n/locales/*.ts

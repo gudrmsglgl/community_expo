@@ -12,6 +12,7 @@
     "ios:storybook": "EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
+    "sync:i18n": "node scripts/sync-i18n-from-sheet.js",
     "storybook-generate": "sb-rn-get-stories"
   },
   "dependencies": {

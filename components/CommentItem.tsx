@@ -5,6 +5,7 @@ import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from ".";
 import { DefaultDeletedAvatar, DefaultRandomAvatar } from "./Avatar";
@@ -32,6 +33,7 @@ export default function CommentItem({
 }: CommentProps) {
   const { mutate: deleteCommmentMutation } = useDeleteComment();
   const { successToast } = useAppToast();
+  const { t: translation } = useTranslation();
 
   return (
     <CommentItemView
@@ -42,7 +44,7 @@ export default function CommentItem({
       onDelete={() => {
         deleteCommmentMutation(comment.id, {
           onSuccess: () => {
-            successToast("댓글이 삭제되었습니다.");
+            successToast(translation("toast.comment.delete"));
           },
         });
       }}
@@ -90,6 +92,7 @@ export function CommentItemView({
           nickname={comment.isDeleted ? "(삭제된 댓글)" : comment.user.nickname}
           createdAt={dayjs(comment.createdAt).fromNow()}
           onPress={() => {}}
+          onPressThumbnail={() => {}}
           imageUri={comment.user.imageUri}
           option={
             comment.user.id === currentUserId &&
