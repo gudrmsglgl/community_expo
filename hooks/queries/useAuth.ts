@@ -14,6 +14,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { router, useNavigation } from "expo-router";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import useAppToast from "../useAppToast";
 
 function getErrorMessage(e: AxiosError) {
@@ -37,8 +38,8 @@ function useSignup() {
 
 function useLogin() {
   const nav = useNavigation();
-  const { errorToast } = useAppToast();
-
+  const { successToast, errorToast } = useAppToast();
+  const { t: translation } = useTranslation();
   return useMutation({
     mutationFn: postLogin,
     onSuccess: async ({ accessToken }) => {
@@ -47,6 +48,12 @@ function useLogin() {
 
       const me = await getMe();
       queryClient.setQueryData([queryKey.AUTH, queryKey.GET_ME], me);
+
+      successToast(
+        translation("login.welcomeMessage", {
+          nickname: me.nickname ?? "회원",
+        }),
+      );
 
       const state = nav.getState();
       const prevRoute = state?.routes?.[state?.index - 1];

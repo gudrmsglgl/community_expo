@@ -4,13 +4,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { EventArg } from "@react-navigation/native";
 import { router, Tabs } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 type TabPressEvent = EventArg<"tabPress", true, undefined>;
 
 interface TabConfig {
   routeName: "index" | "my" | "settings";
-  title: string;
+  titleKey: string;
   focusedIconName: IconName;
   unfocusedIconName: IconName;
   protectedHref?: "/my" | "/settings";
@@ -19,20 +20,20 @@ interface TabConfig {
 const TABS: TabConfig[] = [
   {
     routeName: "index",
-    title: "Home",
+    titleKey: "tabs.home",
     focusedIconName: "home-sharp",
     unfocusedIconName: "home-outline",
   },
   {
     routeName: "my",
-    title: "내 프로필",
+    titleKey: "tabs.profile",
     focusedIconName: "person-circle",
     unfocusedIconName: "person-circle-outline",
     protectedHref: "/my",
   },
   {
     routeName: "settings",
-    title: "설정",
+    titleKey: "tabs.settings",
     focusedIconName: "settings",
     unfocusedIconName: "settings-outline",
     protectedHref: "/settings",
@@ -40,11 +41,10 @@ const TABS: TabConfig[] = [
 ];
 
 export default function TabLayout() {
+  const { t: translation } = useTranslation();
   const { auth, authLoading, refetchAuth } = useAuth();
-
   const requireLoginOnTabPress =
-    (href: "/my" | "/settings") =>
-    async (e: TabPressEvent) => {
+    (href: "/my" | "/settings") => async (e: TabPressEvent) => {
       e.preventDefault();
 
       if (authLoading) return;
@@ -76,7 +76,7 @@ export default function TabLayout() {
           key={routeName}
           name={routeName}
           options={{
-            title: tab.title,
+            title: translation(tab.titleKey),
             tabBarIcon: ({ color, focused }) => (
               <Ionicons
                 name={focused ? tab.focusedIconName : tab.unfocusedIconName}

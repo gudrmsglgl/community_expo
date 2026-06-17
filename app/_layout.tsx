@@ -1,12 +1,16 @@
 import queryClient from "@/api/queryClient";
 import useAuth from "@/hooks/queries/useAuth";
 import useNotificationObserver from "@/hooks/useNotificationObserver";
+import "@/i18n";
+import { getSavedDeviceLanguage } from "@/utils/secureStore";
 import { useReactQueryDevTools } from "@dev-plugins/react-query";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
 import * as Notifications from "expo-notifications";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import i18n from "i18next";
+import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
@@ -25,9 +29,23 @@ Notifications.setNotificationHandler({
   }),
 });
 
+function useLoadLanguageEffect() {
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const savedLanguage = await getSavedDeviceLanguage();
+      if (savedLanguage) {
+        i18n.changeLanguage(savedLanguage);
+      }
+    };
+
+    loadLanguage();
+  }, []);
+}
+
 export default function RootLayout() {
   useReactQueryDevTools(queryClient);
   useNotificationObserver();
+  useLoadLanguageEffect();
 
   return (
     <GestureHandlerRootView>
