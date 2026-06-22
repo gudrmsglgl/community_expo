@@ -22,6 +22,16 @@ export async function getUserPosts(id: number, page = 1): Promise<Post[]> {
   return data;
 }
 
+export async function getSearchPosts(
+  page: number,
+  query: string,
+): Promise<Post[]> {
+  const { data } = await axiosInstance.get(
+    `/posts/search?query=${query}&page=${page}`,
+  );
+  return data;
+}
+
 export async function deletePost(id: string) {
   const { data } = await axiosInstance.delete(`/posts/${id}`);
   return data;

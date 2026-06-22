@@ -6,6 +6,7 @@ export const queryKey = {
   GET_POSTS: "getPosts",
   GET_MY_POSTS: "getMyPosts",
   GET_USER_POSTS: "getUserPosts",
+  GET_SEARCHED_POSTS: "getSearchedPosts",
   GET_POST: "getPost",
   GET_LIKED_POSTS: "getLikedPosts",
   AVATAR: "avatar",

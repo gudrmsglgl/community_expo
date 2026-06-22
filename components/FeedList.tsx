@@ -5,7 +5,7 @@ import {
   UseSuspenseInfiniteQueryResult,
 } from "@tanstack/react-query";
 import { ReactElement, RefObject, useRef, useState } from "react";
-import { FlatList, StyleSheet, Text } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { colors } from ".";
 import FeedItem from "./FeedItem";
 
@@ -16,6 +16,7 @@ type FeedListViewProps = {
   onRefresh?: () => void | Promise<void>;
   onEndReached?: () => void;
   renderFeedItem: (post: Post) => ReactElement;
+  ListEmptyComponent?: ReactElement | null;
 };
 
 type InfiniteHookFn =
@@ -40,10 +41,11 @@ export function InfinitePosts({ hookFn }: { hookFn: InfiniteHookFn }) {
   const FeedListRef = useRef<FlatList | null>(null);
 
   if (isError) return <Text>{error.message}</Text>;
+  const posts = data?.pages.flat() || [];
 
   return (
     <FeedListView
-      posts={data?.pages.flat() || []}
+      posts={posts}
       listRef={FeedListRef}
       renderFeedItem={(post) => <FeedItem post={post} />}
       refreshing={isRefreshing}
@@ -58,6 +60,13 @@ export function InfinitePosts({ hookFn }: { hookFn: InfiniteHookFn }) {
           setIsRefreshing(false);
         });
       }}
+      ListEmptyComponent={
+        !isLoading ? (
+          <View style={styles.emptyContainer}>
+            <Text>조회된 게시글이 없습니다.</Text>
+          </View>
+        ) : null
+      }
     />
   );
 }
@@ -69,18 +78,23 @@ export function FeedListView({
   onRefresh,
   onEndReached,
   renderFeedItem,
+  ListEmptyComponent,
 }: FeedListViewProps) {
   return (
     <FlatList
       ref={listRef}
       data={posts}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={[
+        styles.contentContainer,
+        posts.length === 0 && styles.emptyContainer,
+      ]}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => renderFeedItem(item)}
       onEndReached={onEndReached}
       onEndReachedThreshold={0.5}
       refreshing={refreshing}
       onRefresh={onRefresh}
+      ListEmptyComponent={ListEmptyComponent}
     />
   );
 }
@@ -90,5 +104,11 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     gap: 12,
     backgroundColor: colors.Grey_200,
+  },
+  emptyContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.WHITE,
   },
 });
