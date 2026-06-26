@@ -44,6 +44,7 @@ function SearchAppBar({ onSubmit }: { onSubmit: (string) => void }) {
         onSubmit={() => onSubmit(input)}
         onSubmitEditing={() => onSubmit(input)}
         placeholder="글 제목 검색"
+        autoFocus
       />
     </View>
   );
