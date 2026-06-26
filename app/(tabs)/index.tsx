@@ -15,11 +15,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container} edges={["left", "right", "top"]}>
       <View style={styles.inputContainer}>
         <LogoSvg width={40} height={40} />
-        <SearchInput
-          readOnly
-          placeholder="글 제목 검색"
-          onPress={() => router.push("/post/search")}
-        />
+        <SearchInput readOnly onPress={() => router.push("/post/search")} />
       </View>
 
       <FeedList />

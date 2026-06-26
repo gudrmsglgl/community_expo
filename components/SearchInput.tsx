@@ -1,3 +1,4 @@
+import { fonts } from "@/constants/fonts";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
 import { colors } from ".";
@@ -15,7 +16,6 @@ export default function SearchInput({ onSubmit, ...props }: SearchInputProps) {
         placeholderTextColor={colors.Grey_500}
         returnKeyType="search"
         onSubmitEditing={onSubmit}
-        placeholder="placeholder"
         {...props}
       />
       <Ionicons
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+    fontFamily: fonts.casquareCode1080.semiBold,
     fontSize: 16,
     paddingVertical: 0,
     paddingLeft: 0,

@@ -1,4 +1,5 @@
 import queryClient from "@/api/queryClient";
+import { fonts } from "@/constants/fonts";
 import useAuth from "@/hooks/queries/useAuth";
 import useNotificationObserver from "@/hooks/useNotificationObserver";
 import "@/i18n";
@@ -6,6 +7,7 @@ import { getSavedDeviceLanguage } from "@/utils/secureStore";
 import { useReactQueryDevTools } from "@dev-plugins/react-query";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -42,10 +44,22 @@ function useLoadLanguageEffect() {
   }, []);
 }
 
+function useLoadFonts() {
+  useFonts({
+    [fonts.casquareCode1080
+      .regular]: require("@/assets/font/CasquareCode1080-Regular.ttf"),
+    [fonts.casquareCode1080
+      .semiBold]: require("@/assets/font/CasquareCode1080-SemiBold.ttf"),
+    [fonts.casquareCode1080
+      .bold]: require("@/assets/font/CasquareCode1080-Bold.ttf"),
+  });
+}
+
 export default function RootLayout() {
   useReactQueryDevTools(queryClient);
   useNotificationObserver();
   useLoadLanguageEffect();
+  useLoadFonts();
 
   return (
     <GestureHandlerRootView>
