@@ -10,9 +10,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
 import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import i18n from "i18next";
-import { useEffect } from "react";
+import { changeLanguage } from "i18next";
+import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
@@ -21,6 +22,8 @@ import { Toaster } from "sonner-native";
 export const unstable_settings = {
   anchor: "(tabs)",
 };
+
+void SplashScreen.preventAutoHideAsync();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -32,20 +35,28 @@ Notifications.setNotificationHandler({
 });
 
 function useLoadLanguageEffect() {
+  const [isLanguageLoaded, setIsLanguageLoaded] = useState(false);
+
   useEffect(() => {
     const loadLanguage = async () => {
-      const savedLanguage = await getSavedDeviceLanguage();
-      if (savedLanguage) {
-        i18n.changeLanguage(savedLanguage);
+      try {
+        const savedLanguage = await getSavedDeviceLanguage();
+        if (savedLanguage) {
+          await changeLanguage(savedLanguage);
+        }
+      } finally {
+        setIsLanguageLoaded(true);
       }
     };
 
     loadLanguage();
   }, []);
+
+  return isLanguageLoaded;
 }
 
 function useLoadFonts() {
-  useFonts({
+  const [isFontLoaded, fontError] = useFonts({
     [fonts.casquareCode1080
       .regular]: require("@/assets/font/CasquareCode1080-Regular.ttf"),
     [fonts.casquareCode1080
@@ -53,13 +64,30 @@ function useLoadFonts() {
     [fonts.casquareCode1080
       .bold]: require("@/assets/font/CasquareCode1080-Bold.ttf"),
   });
+
+  return isFontLoaded || Boolean(fontError);
+}
+
+function useHideSplashScreenEffect(isAppReady: boolean) {
+  useEffect(() => {
+    if (isAppReady) {
+      void SplashScreen.hideAsync();
+    }
+  }, [isAppReady]);
 }
 
 export default function RootLayout() {
   useReactQueryDevTools(queryClient);
   useNotificationObserver();
-  useLoadLanguageEffect();
-  useLoadFonts();
+  const isLanguageLoaded = useLoadLanguageEffect();
+  const isFontLoaded = useLoadFonts();
+  const isAppReady = isLanguageLoaded && isFontLoaded;
+
+  useHideSplashScreenEffect(isAppReady);
+
+  if (!isAppReady) {
+    return null;
+  }
 
   return (
     <GestureHandlerRootView>
