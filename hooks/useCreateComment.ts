@@ -8,7 +8,7 @@ export default function useCreateComment() {
     mutationFn: createComment,
     onSuccess: (postId: number) => {
       queryClient.invalidateQueries({
-        queryKey: [queryKey.POST, queryKey.GET_POST, postId],
+        queryKey: [queryKey.GRAPHQL_POST, queryKey.GRAPHQL_QUERY_POST, postId],
       });
     },
   });

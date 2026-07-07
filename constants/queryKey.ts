@@ -9,5 +9,7 @@ export const queryKey = {
   GET_SEARCHED_POSTS: "getSearchedPosts",
   GET_POST: "getPost",
   GET_LIKED_POSTS: "getLikedPosts",
+  GRAPHQL_POST: "graphqlPost",
+  GRAPHQL_QUERY_POST: "graphqlQueryPost",
   AVATAR: "avatar",
 };

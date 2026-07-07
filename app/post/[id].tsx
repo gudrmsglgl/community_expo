@@ -7,7 +7,7 @@ import InputField from "@/components/InputField";
 import useAuth from "@/hooks/queries/useAuth";
 import useAppToast from "@/hooks/useAppToast";
 import useCreateComment from "@/hooks/useCreateComment";
-import useGetPost from "@/hooks/useGetPost";
+import { useGraphqlPost } from "@/hooks/useGraphqlPost";
 import useKeyboardVisible from "@/hooks/useKeyboardVisible";
 import useLikePost from "@/hooks/useLikePost";
 import { Comment, PostComment } from "@/types";
@@ -45,7 +45,7 @@ export default function PostScreen() {
   const isKeyboardVisible = useKeyboardVisible();
 
   const { id } = useLocalSearchParams();
-  const { data: post, isLoading } = useGetPost(Number(id));
+  const { data: post, isLoading } = useGraphqlPost(Number(id));
   const { mutate: createCommentMutation } = useCreateComment();
   const { mutate: likePostMutation } = useLikePost();
 
