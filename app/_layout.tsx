@@ -1,9 +1,11 @@
+import apolloClient from "@/api/apolloClient";
 import queryClient from "@/api/queryClient";
 import { fonts } from "@/constants/fonts";
 import useAuth from "@/hooks/queries/useAuth";
 import useNotificationObserver from "@/hooks/useNotificationObserver";
 import "@/i18n";
 import { getSavedDeviceLanguage } from "@/utils/secureStore";
+import { ApolloProvider } from "@apollo/client/react";
 import { useReactQueryDevTools } from "@dev-plugins/react-query";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -93,10 +95,12 @@ export default function RootLayout() {
     <GestureHandlerRootView>
       <ActionSheetProvider>
         <QueryClientProvider client={queryClient}>
-          <KeyboardProvider>
-            <StatusBar style="dark" />
-            <RootNavigator />
-          </KeyboardProvider>
+          <ApolloProvider client={apolloClient}>
+            <KeyboardProvider>
+              <StatusBar style="dark" />
+              <RootNavigator />
+            </KeyboardProvider>
+          </ApolloProvider>
         </QueryClientProvider>
       </ActionSheetProvider>
       <Toaster />

@@ -1,0 +1,10 @@
+{
+  "client": {
+    "service": {
+      "name": "community-server",
+      "url": "http://127.0.0.1:3030/graphql"
+    },
+    "includes": ["api/**/*.ts", "hooks/**/*.ts", "app/**/*.tsx"],
+    "excludes": ["node_modules/**"]
+  }
+}

@@ -16,6 +16,8 @@
     "storybook-generate": "sb-rn-get-stories"
   },
   "dependencies": {
+    "@apollo/client": "^4.2.6",
+    "@apollo/client-devtools-vscode": "^4.26.0",
     "@babel/core": "^7.29.0",
     "@dev-plugins/react-query": "^0.4.0",
     "@expo/react-native-action-sheet": "^4.1.1",
@@ -53,6 +55,7 @@
     "expo-symbols": "~1.0.8",
     "expo-system-ui": "~6.0.9",
     "expo-web-browser": "~15.0.10",
+    "graphql": "^16.14.2",
     "i18next": "^26.3.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -69,6 +72,7 @@
     "react-native-svg": "^15.15.3",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "^0.5.1",
+    "rxjs": "^7.8.2",
     "sonner-native": "^0.24.0",
     "storybook": "^10.2.15",
     "zod": "^4.3.6"
