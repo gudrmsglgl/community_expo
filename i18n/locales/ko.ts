@@ -22,6 +22,9 @@ const locale = {
     "comment": {
       "delete": "댓글이 삭제되었습니다."
     }
+  },
+  "comment": {
+    "isDeleted": "삭제된 댓글입니다."
   }
 };
 
