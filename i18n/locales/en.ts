@@ -22,6 +22,9 @@ const locale = {
     "comment": {
       "delete": "This comment has been deleted."
     }
+  },
+  "comment": {
+    "isDeleted": "This comment has been deleted."
   }
 };
 
